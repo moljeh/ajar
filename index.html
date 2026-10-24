@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6254dc">
+  <meta name="description" content="EduPlan AI — ruang kerja perangkat ajar guru.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>EduPlan AI | Ruang Kerja Guru</title>
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./notification-ui.css">
+<script src="./app.js" defer></script>
+<script src="./notification-ui.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Lewati ke konten</a>
+  <div id="app"></div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <div id="loading" class="loading" role="status" aria-live="polite" hidden>
+    <div class="loading-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="loading-message">Memproses...</p>
+      <small class="muted">Mohon tunggu dan jangan mengirim ulang permintaan.</small>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="notice">Aktifkan JavaScript untuk menggunakan EduPlan AI.</div>
+  </noscript>
+</body>
+</html>
