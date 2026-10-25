@@ -1,75 +1,73 @@
 /**
- * EDUPLAN AI | APP.JS LENGKAP — REVISI CONTOH RUJUKAN
- *
- * CARA MEMBACA:
- * - Cari nama fungsi atau penanda F01, F02, dan seterusnya.
- * - Edit getReferenceExample untuk menambah contoh pada menu tertentu.
- * - Kode katalog tambahan berasal dari backend melalui state.catalog.
- * - Contoh tidak menjadi data formulir: ditampilkan sebagai placeholder.
- * - CP resmi tetap harus ditempel dari sumber yang telah diperiksa.
+ * EDUPLAN AI — PENGGABUNGAN TANPA DESAIN ULANG
+ * Fungsi dan aturan tampilan dipertahankan dari kode pengguna.
+ * Notifikasi modern asli digabung; tidak memerlukan notification-ui.js.
+ * Satu deklarasi untuk setiap fungsi aplikasi.
+ * Contoh rujukan: getReferenceExample().
  *
  * DAFTAR FUNGSI
- * F01 | $: Memilih elemen DOM
- * F02 | escapeHTML: Mengamankan teks untuk HTML
- * F03 | title: Menampilkan nama jenis dokumen
- * F04 | dateText: Memformat tanggal dan waktu
- * F05 | button: Membuat tombol aksi
- * F06 | badge: Membuat label status
- * F07 | field: Membuat input formulir
- * F08 | selectField: Membuat pilihan dropdown
- * F09 | textarea: Membuat kolom teks panjang
- * F10 | check: Membuat checkbox
- * F11 | showToast: Menampilkan notifikasi
- * F12 | setBusy: Mengatur indikator proses
- * F13 | run: Menjalankan tugas dengan penanganan kesalahan
- * F14 | formValues: Membaca isian formulir
- * F15 | api: Mengirim permintaan ke backend
- * F16 | clearSession: Menghapus sesi lokal
- * F17 | renderLogin: Menampilkan halaman login
- * F18 | login: Memproses login
- * F19 | applyBoot: Memuat data awal ke state
- * F20 | logout: Memproses keluar akun
- * F21 | navItem: Membuat tombol navigasi
- * F22 | renderRoleAvatar: Membuat ikon administrator atau guru
- * F23 | renderShell: Menampilkan sidebar dan header
- * F24 | setRoute: Mengatur status navigasi aktif
- * F25 | mayLeave: Memeriksa perubahan yang belum disimpan
- * F26 | navigate: Membuka menu aplikasi
- * F27 | pageHead: Membuat judul halaman
- * F28 | renderDashboard: Menampilkan dashboard
- * F29 | renderCategory: Menampilkan pilihan generator
- * F30 | getReferenceExample: CONTOH RUJUKAN BERDASARKAN JENIS MENU
- * F31 | renderGenerator: Menampilkan formulir generator dan contoh isian
- * F32 | generate: Membuat dan menyimpan draf AI
- * F33 | openDocument: Membuka dokumen tersimpan
- * F34 | renderEditor: Menampilkan editor dokumen
- * F35 | editorValues: Membaca data editor
- * F36 | syncDocument: Memperbarui dokumen pada state
- * F37 | persistEditor: Menyimpan isi editor ke backend
- * F38 | saveDocument: Menangani tombol simpan dokumen
- * F39 | downloadBlob: Mengunduh file di browser
- * F40 | exportDocument: Mengekspor PDF Word atau TXT
- * F41 | copyDocument: Menyalin isi dokumen
- * F42 | renderHistory: Menampilkan riwayat favorit atau sampah
- * F43 | renderDocumentResults: Menampilkan hasil filter dan halaman dokumen
- * F44 | mutateDocument: Mengubah favorit atau status sampah
- * F45 | renderProfile: Menampilkan profil guru dan sekolah
- * F46 | saveProfile: Menyimpan profil
- * F47 | renderUsers: Menampilkan manajemen akun
- * F48 | editUser: Mengisi formulir perubahan akun
- * F49 | saveUser: Menyimpan akun pengguna
- * F50 | renderSettings: Menampilkan pengaturan provider dan kuota
- * F51 | saveProvider: Menyimpan konfigurasi provider AI
- * F52 | testProvider: Menguji koneksi provider
- * F53 | saveSettings: Menyimpan batas penggunaan
- * F54 | renderLogs: Menampilkan log aktivitas
- * F55 | renderHelp: Menampilkan panduan penggunaan
- * F56 | onClick: Menangani klik tombol aplikasi
- * F57 | onSubmit: Menangani pengiriman formulir
- * F58 | onInput: Menangani pengetikan dan pencarian
- * F59 | onChange: Menangani perubahan filter
- * F60 | toggleTheme: Mengganti tema
- * F61 | init: Inisialisasi aplikasi
+ * F01 | EduNotify
+ * F02 | $
+ * F03 | escapeHTML
+ * F04 | title
+ * F05 | dateText
+ * F06 | button
+ * F07 | badge
+ * F08 | field
+ * F09 | selectField
+ * F10 | textarea
+ * F11 | check
+ * F12 | showToast
+ * F13 | setBusy
+ * F14 | run
+ * F15 | formValues
+ * F16 | api
+ * F17 | clearSession
+ * F18 | renderLogin
+ * F19 | login
+ * F20 | applyBoot
+ * F21 | logout
+ * F22 | navItem
+ * F23 | renderRoleAvatar
+ * F24 | renderShell
+ * F25 | setRoute
+ * F26 | mayLeave
+ * F27 | navigate
+ * F28 | pageHead
+ * F29 | renderDashboard
+ * F30 | renderCategory
+ * F31 | getReferenceExample
+ * F32 | renderGenerator
+ * F33 | generate
+ * F34 | openDocument
+ * F35 | renderEditor
+ * F36 | editorValues
+ * F37 | syncDocument
+ * F38 | persistEditor
+ * F39 | saveDocument
+ * F40 | downloadBlob
+ * F41 | exportDocument
+ * F42 | copyDocument
+ * F43 | renderHistory
+ * F44 | renderDocumentResults
+ * F45 | mutateDocument
+ * F46 | renderProfile
+ * F47 | saveProfile
+ * F48 | renderUsers
+ * F49 | editUser
+ * F50 | saveUser
+ * F51 | renderSettings
+ * F52 | saveProvider
+ * F53 | testProvider
+ * F54 | saveSettings
+ * F55 | renderLogs
+ * F56 | renderHelp
+ * F57 | onClick
+ * F58 | onSubmit
+ * F59 | onInput
+ * F60 | onChange
+ * F61 | toggleTheme
+ * F62 | init
  */
 
 /**
@@ -111,39 +109,178 @@ const state = {
   toastTimer: null
 };
 
+/**
+ * EduPlan AI — Notifikasi modern, digabung tanpa perubahan desain.
+ * Pesan menggunakan textContent; tidak menggunakan alert/confirm/prompt.
+ */
+/* -----------------------------------------------------------------
+ * F01 | EduNotify
+ * ----------------------------------------------------------------- */
+const EduNotify = (() => {
+  let stack = null;
+  let dialog = null;
+  let activeResolve = null;
+  let previousFocus = null;
+  let previousOverflow = '';
+  let queue = Promise.resolve();
+
+  const types = {
+    success: {title: 'Berhasil', icon: '✓'},
+    error: {title: 'Terjadi kendala', icon: '!'},
+    info: {title: 'Informasi', icon: 'i'},
+    warning: {title: 'Perhatian', icon: '!'}
+  };
+
+  function make(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+  }
+
+  function toast(message, options = {}) {
+    if (!stack) {
+      stack = make('div', 'edu-toast-stack');
+      stack.setAttribute('aria-label', 'Notifikasi aplikasi');
+      document.body.appendChild(stack);
+    }
+    const type = types[options.type] ? options.type : 'success';
+    const settings = types[type];
+    const duration = Math.max(3000, Number(options.duration) || (type === 'error' ? 10000 : 6000));
+    const card = make('section', 'edu-toast');
+    card.dataset.type = type;
+    card.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    card.setAttribute('aria-atomic', 'true');
+    card.style.setProperty('--duration', `${duration}ms`);
+    const icon = make('div', 'edu-toast-icon', settings.icon);
+    icon.setAttribute('aria-hidden', 'true');
+    const content = make('div');
+    content.append(make('h3', 'edu-toast-title', options.title || settings.title));
+    content.append(make('p', 'edu-toast-message', String(message)));
+    const close = make('button', 'edu-icon-button', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Tutup notifikasi');
+    const progress = make('div', 'edu-toast-progress');
+    progress.setAttribute('aria-hidden', 'true');
+    card.append(icon, content, close, progress);
+    stack.prepend(card);
+    let remaining = duration;
+    let started = Date.now();
+    let timer;
+    const remove = () => { clearTimeout(timer); card.remove(); };
+    const resume = () => { started = Date.now(); timer = setTimeout(remove, remaining); };
+    const pause = () => { clearTimeout(timer); remaining = Math.max(0, remaining - (Date.now() - started)); };
+    close.addEventListener('click', remove);
+    card.addEventListener('mouseenter', pause);
+    card.addEventListener('mouseleave', resume);
+    card.addEventListener('focusin', () => { pause(); progress.style.animationPlayState = 'paused'; });
+    card.addEventListener('focusout', event => {
+      if (!card.contains(event.relatedTarget)) { resume(); progress.style.animationPlayState = ''; }
+    });
+    resume();
+    while (stack.children.length > 4) stack.lastElementChild.remove();
+    return remove;
+  }
+
+  function finish(value) {
+    if (!activeResolve) return;
+    const resolve = activeResolve;
+    activeResolve = null;
+    dialog.close();
+    document.body.style.overflow = previousOverflow;
+    if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+    resolve(value);
+  }
+
+  function createDialog() {
+    if (dialog) return;
+    dialog = make('dialog', 'edu-dialog');
+    dialog.setAttribute('aria-labelledby', 'edu-dialog-title');
+    dialog.setAttribute('aria-describedby', 'edu-dialog-message');
+    const body = make('div', 'edu-dialog-body');
+    const top = make('div', 'edu-dialog-top');
+    const icon = make('div', 'edu-dialog-icon', '?');
+    icon.setAttribute('aria-hidden', 'true');
+    const close = make('button', 'edu-icon-button', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Batalkan dan tutup');
+    close.addEventListener('click', () => finish(false));
+    top.append(icon, close);
+    const title = make('h2'); title.id = 'edu-dialog-title';
+    const message = make('p'); message.id = 'edu-dialog-message';
+    body.append(top, title, message);
+    const footer = make('div', 'edu-dialog-footer');
+    const cancel = make('button', 'edu-dialog-button');
+    cancel.type = 'button'; cancel.id = 'edu-dialog-cancel';
+    const accept = make('button', 'edu-dialog-button edu-dialog-button-primary');
+    accept.type = 'button'; accept.id = 'edu-dialog-accept';
+    cancel.addEventListener('click', () => finish(false));
+    accept.addEventListener('click', () => finish(true));
+    footer.append(cancel, accept);
+    dialog.append(body, footer);
+    dialog.addEventListener('cancel', event => { event.preventDefault(); finish(false); });
+    document.body.appendChild(dialog);
+  }
+
+  function ask(options = {}) {
+    const job = () => new Promise(resolve => {
+      createDialog();
+      previousFocus = document.activeElement;
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      dialog.dataset.danger = String(Boolean(options.danger));
+      dialog.querySelector('.edu-dialog-icon').textContent = options.danger ? '!' : (options.icon || '?');
+      dialog.querySelector('#edu-dialog-title').textContent = options.title || 'Konfirmasi tindakan';
+      dialog.querySelector('#edu-dialog-message').textContent = options.message || 'Lanjutkan tindakan ini?';
+      const cancel = dialog.querySelector('#edu-dialog-cancel');
+      const accept = dialog.querySelector('#edu-dialog-accept');
+      cancel.textContent = options.cancelText || 'Batal';
+      accept.textContent = options.confirmText || 'Lanjutkan';
+      activeResolve = resolve;
+      dialog.showModal();
+      cancel.focus();
+    });
+    const result = queue.then(job);
+    queue = result.catch(() => false);
+    return result;
+  }
+
+  return Object.freeze({toast, ask});
+})();
+
 /* ==================== UTILITAS ==================== */
 
 /* -----------------------------------------------------------------
- * F01 | $ — Memilih elemen DOM
+ * F02 | $
  * ----------------------------------------------------------------- */
 const $ = selector => document.querySelector(selector);
 /* -----------------------------------------------------------------
- * F02 | escapeHTML — Mengamankan teks untuk HTML
+ * F03 | escapeHTML
  * ----------------------------------------------------------------- */
 const escapeHTML = value => String(value == null ? '' : value).replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
 /* -----------------------------------------------------------------
- * F03 | title — Menampilkan nama jenis dokumen
+ * F04 | title
  * ----------------------------------------------------------------- */
 const title = key => TITLES[key] || String(key || '').replace(/_/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
 /* -----------------------------------------------------------------
- * F04 | dateText — Memformat tanggal dan waktu
+ * F05 | dateText
  * ----------------------------------------------------------------- */
 const dateText = value => {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? '—' : date.toLocaleString('id-ID', {dateStyle: 'medium', timeStyle: 'short'});
 };
 /* -----------------------------------------------------------------
- * F05 | button — Membuat tombol aksi
+ * F06 | button
  * ----------------------------------------------------------------- */
 const button = (text, action, attrs = '', kind = '') => `<button type="button" class="btn ${kind}" data-action="${action}" ${attrs}>${text}</button>`;
 /* -----------------------------------------------------------------
- * F06 | badge — Membuat label status
+ * F07 | badge
  * ----------------------------------------------------------------- */
 const badge = (text, kind = '') => `<span class="badge ${kind}">${escapeHTML(text)}</span>`;
 /* -----------------------------------------------------------------
- * F07 | field — Membuat input formulir
+ * F08 | field
  * ----------------------------------------------------------------- */
 const field = (name, label, value = '', options = {}) => `
   <label class="field ${options.full ? 'span-2' : ''}">
@@ -155,7 +292,7 @@ const field = (name, label, value = '', options = {}) => `
       ${options.autocomplete ? `autocomplete="${options.autocomplete}"` : ''}>
   </label>`;
 /* -----------------------------------------------------------------
- * F08 | selectField — Membuat pilihan dropdown
+ * F09 | selectField
  * ----------------------------------------------------------------- */
 const selectField = (name, label, items, selected = '') => `
   <label class="field"><span>${escapeHTML(label)}</span><select name="${name}">
@@ -166,7 +303,7 @@ const selectField = (name, label, items, selected = '') => `
     }).join('')}
   </select></label>`;
 /* -----------------------------------------------------------------
- * F09 | textarea — Membuat kolom teks panjang
+ * F10 | textarea
  * ----------------------------------------------------------------- */
 const textarea = (name, label, placeholder = '') => `
   <label class="field"><span>${escapeHTML(label)}</span><textarea
@@ -175,25 +312,22 @@ const textarea = (name, label, placeholder = '') => `
     rows="${name === 'reference' ? 14 : 5}"
   ></textarea></label>`;
 /* -----------------------------------------------------------------
- * F10 | check — Membuat checkbox
+ * F11 | check
  * ----------------------------------------------------------------- */
 const check = (name, text, checked = false) => `
   <label class="check"><input name="${name}" type="checkbox" ${checked ? 'checked' : ''}>${escapeHTML(text)}</label>`;
 
 /* -----------------------------------------------------------------
- * F11 | showToast — Menampilkan notifikasi
+ * F12 | showToast
  * ----------------------------------------------------------------- */
 function showToast(message, error = false) {
-  const toast = $('#toast');
-  toast.textContent = message;
-  toast.classList.toggle('error', error);
-  toast.hidden = false;
-  clearTimeout(state.toastTimer);
-  state.toastTimer = setTimeout(() => { toast.hidden = true; }, 7000);
+  const legacy = document.querySelector('#toast');
+  if (legacy) legacy.hidden = true;
+  EduNotify.toast(message, {type: error ? 'error' : 'success'});
 }
 
 /* -----------------------------------------------------------------
- * F12 | setBusy — Mengatur indikator proses
+ * F13 | setBusy
  * ----------------------------------------------------------------- */
 function setBusy(value, message = 'Memproses...') {
   state.busy = value;
@@ -203,7 +337,7 @@ function setBusy(value, message = 'Memproses...') {
 }
 
 /* -----------------------------------------------------------------
- * F13 | run — Menjalankan tugas dengan penanganan kesalahan
+ * F14 | run
  * ----------------------------------------------------------------- */
 async function run(task, message) {
   if (state.busy) return null;
@@ -217,14 +351,14 @@ async function run(task, message) {
 }
 
 /* -----------------------------------------------------------------
- * F14 | formValues — Membaca isian formulir
+ * F15 | formValues
  * ----------------------------------------------------------------- */
 function formValues(form) { return Object.fromEntries(new FormData(form).entries()); }
 
 /* ==================== KONEKSI GOOGLE APPS SCRIPT ==================== */
 
 /* -----------------------------------------------------------------
- * F15 | api — Mengirim permintaan ke backend
+ * F16 | api
  * ----------------------------------------------------------------- */
 async function api(action, params = {}) {
   if (CONFIG.API_URL.includes('GANTI_ID_DEPLOYMENT')) {
@@ -257,7 +391,7 @@ async function api(action, params = {}) {
 /* ==================== LOGIN & SESI ==================== */
 
 /* -----------------------------------------------------------------
- * F16 | clearSession — Menghapus sesi lokal
+ * F17 | clearSession
  * ----------------------------------------------------------------- */
 function clearSession() {
   sessionStorage.removeItem(CONFIG.SESSION_KEY);
@@ -269,7 +403,7 @@ function clearSession() {
 }
 
 /* -----------------------------------------------------------------
- * F17 | renderLogin — Menampilkan halaman login
+ * F18 | renderLogin
  * ----------------------------------------------------------------- */
 function renderLogin() {
   $('#app').innerHTML = `
@@ -316,7 +450,7 @@ function renderLogin() {
 }
 
 /* -----------------------------------------------------------------
- * F18 | login — Memproses login
+ * F19 | login
  * ----------------------------------------------------------------- */
 async function login(form) {
   const values = formValues(form);
@@ -331,17 +465,23 @@ async function login(form) {
 }
 
 /* -----------------------------------------------------------------
- * F19 | applyBoot — Memuat data awal ke state
+ * F20 | applyBoot
  * ----------------------------------------------------------------- */
 function applyBoot(data) {
   Object.assign(state, {user: data.user, catalog: data.catalog, providers: data.providers, documents: data.documents, usage: data.usage});
 }
 
 /* -----------------------------------------------------------------
- * F20 | logout — Memproses keluar akun
+ * F21 | logout
  * ----------------------------------------------------------------- */
 async function logout() {
-  if (!mayLeave()) return;
+  if (!(await mayLeave())) return;
+  const accepted = await EduNotify.ask({
+    title: 'Keluar dari ruang kerja?',
+    message: 'Dokumen yang sudah disimpan tetap tersedia saat Anda masuk kembali.',
+    confirmText: 'Ya, keluar', cancelText: 'Tetap di sini', icon: '↪'
+  });
+  if (!accepted) return;
   await run(async () => {
     try { await api('logout'); }
     finally { clearSession(); renderLogin(); }
@@ -351,7 +491,7 @@ async function logout() {
 /* ==================== SHELL & NAVIGASI ==================== */
 
 /* -----------------------------------------------------------------
- * F21 | navItem — Membuat tombol navigasi
+ * F22 | navItem
  * ----------------------------------------------------------------- */
 function navItem(route, text, icon, extra = '') {
   return `<button type="button" class="nav-item" data-action="navigate" data-route="${route}" ${extra}>
@@ -365,7 +505,7 @@ function navItem(route, text, icon, extra = '') {
    ========================================================= */
 
 /* -----------------------------------------------------------------
- * F22 | renderRoleAvatar — Membuat ikon administrator atau guru
+ * F23 | renderRoleAvatar
  * ----------------------------------------------------------------- */
 function renderRoleAvatar(role) {
   const isAdmin = role === 'admin';
@@ -429,7 +569,7 @@ function renderRoleAvatar(role) {
 
 
 /* -----------------------------------------------------------------
- * F23 | renderShell — Menampilkan sidebar dan header
+ * F24 | renderShell
  * ----------------------------------------------------------------- */
 function renderShell() {
   const user = state.user;
@@ -505,7 +645,7 @@ function renderShell() {
 }
 
 /* -----------------------------------------------------------------
- * F24 | setRoute — Mengatur status navigasi aktif
+ * F25 | setRoute
  * ----------------------------------------------------------------- */
 function setRoute(route, text, category = '') {
   state.route = route;
@@ -520,20 +660,26 @@ function setRoute(route, text, category = '') {
 }
 
 /* -----------------------------------------------------------------
- * F25 | mayLeave — Memeriksa perubahan yang belum disimpan
+ * F26 | mayLeave
  * ----------------------------------------------------------------- */
-function mayLeave() {
+async function mayLeave() {
   if (!state.dirty) return true;
-  if (!confirm('Anda belum menyimpan perubahan. Tinggalkan halaman ini?')) return false;
-  state.dirty = false;
-  return true;
+  const accepted = await EduNotify.ask({
+    title: 'Perubahan belum disimpan',
+    message: 'Dokumen ini memiliki perubahan yang belum disimpan. Jika Anda meninggalkan editor, perubahan tersebut akan hilang.',
+    confirmText: 'Tinggalkan editor',
+    cancelText: 'Kembali mengedit',
+    danger: true
+  });
+  if (accepted) state.dirty = false;
+  return accepted;
 }
 
 /* -----------------------------------------------------------------
- * F26 | navigate — Membuka menu aplikasi
+ * F27 | navigate
  * ----------------------------------------------------------------- */
 async function navigate(route, category = '') {
-  if (!mayLeave()) return;
+  if (!(await mayLeave())) return;
   if (route === 'dashboard') return renderDashboard();
   if (route === 'category') return renderCategory(category);
   if (route === 'profile') return renderProfile();
@@ -557,7 +703,7 @@ async function navigate(route, category = '') {
 }
 
 /* -----------------------------------------------------------------
- * F27 | pageHead — Membuat judul halaman
+ * F28 | pageHead
  * ----------------------------------------------------------------- */
 function pageHead(heading, description) {
   return `<div class="page-head"><h1>${escapeHTML(heading)}</h1><p>${escapeHTML(description)}</p></div>`;
@@ -566,7 +712,7 @@ function pageHead(heading, description) {
 /* ==================== DASHBOARD & KATEGORI ==================== */
 
 /* -----------------------------------------------------------------
- * F28 | renderDashboard — Menampilkan dashboard
+ * F29 | renderDashboard
  * ----------------------------------------------------------------- */
 function renderDashboard() {
   setRoute('dashboard', 'Dashboard');
@@ -597,7 +743,7 @@ function renderDashboard() {
 }
 
 /* -----------------------------------------------------------------
- * F29 | renderCategory — Menampilkan pilihan generator
+ * F30 | renderCategory
  * ----------------------------------------------------------------- */
 function renderCategory(key) {
   const category = state.catalog[key];
@@ -619,10 +765,10 @@ function renderCategory(key) {
 /* ==================== FORM GENERATOR ==================== */
 
 /* -----------------------------------------------------------------
- * F30 | getReferenceExample — CONTOH RUJUKAN BERDASARKAN JENIS MENU
+ * F31 | getReferenceExample
  * ----------------------------------------------------------------- */
 function getReferenceExample(type) {
-  // Kode menu yang diketahui dari TITLES; tambahkan entri untuk katalog lain.
+  // Tambahkan kode menu katalog lain di sini tanpa mengubah renderGenerator.
   const examples = {
   "rpp": [
     "TP: Peserta didik mampu membandingkan dua pecahan dengan penyebut berbeda menggunakan gambar dan menjelaskan alasannya.",
@@ -687,18 +833,13 @@ function getReferenceExample(type) {
     "Rujukan: [Tempelkan ATP dan data kalender sekolah yang digunakan.]"
   ]
 };
-
   const fallback = [
     'TP: Peserta didik mampu membandingkan dua pecahan dan menjelaskan alasannya.',
     'Data anonim: Dari 30 peserta didik, 18 sudah memahami materi, 8 memerlukan latihan tambahan, dan 4 memerlukan pendampingan.',
     'CP / rujukan resmi: [Tempelkan kutipan sumber yang relevan, judul dokumen, instansi penerbit, dan tahun.]',
     'Pilih hanya bagian yang sesuai dengan jenis dokumen ini.'
   ];
-
-  const parts = Object.prototype.hasOwnProperty.call(examples, type)
-    ? examples[type]
-    : fallback;
-
+  const parts = Object.prototype.hasOwnProperty.call(examples, type) ? examples[type] : fallback;
   return [
     `Contoh isian untuk ${title(type)}:`,
     ...parts,
@@ -707,48 +848,42 @@ function getReferenceExample(type) {
 }
 
 /* -----------------------------------------------------------------
- * F31 | renderGenerator — Menampilkan formulir generator dan contoh isian
+ * F32 | renderGenerator
  * ----------------------------------------------------------------- */
-function renderGenerator(type) {
-  if (!mayLeave()) return;
+async function renderGenerator(type) {
+  if (!(await mayLeave())) return;
   state.generatorType = type;
   setRoute('generator', `Generator / ${title(type)}`);
   const providers = state.providers.map(p => ({value: p.id, text: `${title(p.id)} · ${p.model}`}));
   const noProvider = providers.length === 0;
-  $('#content').innerHTML = `<div class="stack">
-    ${pageHead(`Generator ${title(type)}`, 'Lengkapi konteks pembelajaran. Semakin jelas rujukan, semakin relevan drafnya.')}
-    <div class="notice">Isian akan dikirim ke provider pilihan Anda. Gunakan data anonim. CP/kalender resmi tidak diambil otomatis; tempelkan sumber terverifikasi bila diperlukan.</div>
+  document.querySelector('#content').innerHTML = `<div class="stack">
+    ${pageHead(`Generator ${title(type)}`, 'Lengkapi konteks pembelajaran agar draf lebih relevan.')}
+    <div class="notice">Isian dikirim ke provider pilihan Anda. Gunakan data anonim dan rujukan terverifikasi.</div>
     <form class="card" data-form="generate">
-      <div class="row between mb-20"><h2 class="mb-0">Konteks dokumen</h2>${badge('Draf AI')}</div>
+      <h2>Konteks dokumen</h2>
       <div class="form-grid">
         ${field('subject', 'Mata pelajaran *', '', {required: true, max: 150})}
-        ${field('level', 'Jenjang / kelas / fase *', '', {required: true, max: 100, placeholder: 'Contoh: SD / kelas 4 / fase B'})}
+        ${field('level', 'Jenjang / kelas / fase *', '', {required: true, max: 100})}
         ${field('topic', 'Materi / topik *', '', {required: true, max: 200})}
-        ${field('year', 'Tahun ajaran', '', {max: 40, placeholder: 'Isi sesuai kebutuhan'})}
+        ${field('year', 'Tahun ajaran', '', {max: 40})}
         ${selectField('semester', 'Semester', ['Ganjil', 'Genap'])}
         ${field('duration', 'Alokasi waktu / pertemuan', '', {max: 150})}
         ${field('curriculum', 'Kurikulum', '', {max: 150})}
         ${selectField('provider', 'Provider AI', providers)}
       </div>
-      ${textarea(
-        'reference',
-       'CP / TP / rujukan resmi / data anonim — TES REVISI',
-        getReferenceExample(type)
-      )}
-      <p class="muted">Contoh di dalam kolom hanya ilustrasi, bukan kutipan CP resmi. Gunakan sumber yang telah diperiksa dan jangan masukkan identitas pribadi peserta didik.</p>
-      ${textarea('instructions', 'Format / kebutuhan khusus / jumlah soal / catatan', 'Contoh: tabel kisi-kisi, 10 soal pilihan ganda dan pembahasan, diferensiasi, rubrik 4 tingkat.')}
+      ${textarea('reference', 'CP / TP / rujukan resmi / data anonim', getReferenceExample(type))}
+      <p class="muted">Contoh di dalam kolom hanya ilustrasi, bukan kutipan CP resmi. Sesuaikan dengan konteks Anda dan jangan masukkan identitas pribadi peserta didik.</p>
+      ${textarea('instructions', 'Format / kebutuhan khusus / jumlah soal / catatan', 'Contoh: 10 soal pilihan ganda beserta pembahasan.')}
       <p class="muted">Guru: ${escapeHTML(state.user.name)} · Sekolah: ${escapeHTML(state.user.school || '[belum diisi]')}</p>
-      <div class="row">
-        <button class="btn btn-primary" type="submit" ${noProvider ? 'disabled' : ''}>✦ Generate & simpan draf</button>
-        ${button('Profil guru & sekolah', 'navigate', 'data-route="profile"', 'btn-outline')}
-      </div>
-      ${noProvider ? '<p class="notice mt-20">Belum ada provider aktif. Admin perlu memasukkan API key dan ID model terlebih dahulu.</p>' : ''}
+      <div class="row"><button class="btn btn-primary" type="submit" ${noProvider ? 'disabled' : ''}>✦ Generate & simpan draf</button>
+        ${button('Profil guru & sekolah', 'navigate', 'data-route="profile"', 'btn-outline')}</div>
+      ${noProvider ? '<p class="notice mt-20">Belum ada provider aktif. Hubungi admin.</p>' : ''}
     </form>
   </div>`;
 }
 
 /* -----------------------------------------------------------------
- * F32 | generate — Membuat dan menyimpan draf AI
+ * F33 | generate
  * ----------------------------------------------------------------- */
 async function generate(form) {
   const params = {...formValues(form), type: state.generatorType};
@@ -766,10 +901,10 @@ async function generate(form) {
 /* ==================== EDITOR & DOWNLOAD ==================== */
 
 /* -----------------------------------------------------------------
- * F33 | openDocument — Membuka dokumen tersimpan
+ * F34 | openDocument
  * ----------------------------------------------------------------- */
 async function openDocument(id) {
-  if (!mayLeave()) return;
+  if (!(await mayLeave())) return;
   await run(async () => {
     state.editor = await api('readDocument', {id});
     state.dirty = false;
@@ -778,7 +913,7 @@ async function openDocument(id) {
 }
 
 /* -----------------------------------------------------------------
- * F34 | renderEditor — Menampilkan editor dokumen
+ * F35 | renderEditor
  * ----------------------------------------------------------------- */
 function renderEditor() {
   setRoute('editor', 'Editor dokumen');
@@ -806,7 +941,7 @@ function renderEditor() {
 }
 
 /* -----------------------------------------------------------------
- * F35 | editorValues — Membaca data editor
+ * F36 | editorValues
  * ----------------------------------------------------------------- */
 function editorValues() {
   const values = formValues($('[data-form="save-document"]'));
@@ -814,7 +949,7 @@ function editorValues() {
 }
 
 /* -----------------------------------------------------------------
- * F36 | syncDocument — Memperbarui dokumen pada state
+ * F37 | syncDocument
  * ----------------------------------------------------------------- */
 function syncDocument(doc) {
   const index = state.documents.findIndex(d => d.id === doc.id);
@@ -822,7 +957,7 @@ function syncDocument(doc) {
 }
 
 /* -----------------------------------------------------------------
- * F37 | persistEditor — Menyimpan isi editor ke backend
+ * F38 | persistEditor
  * ----------------------------------------------------------------- */
 async function persistEditor() {
   const values = editorValues();
@@ -834,14 +969,14 @@ async function persistEditor() {
 }
 
 /* -----------------------------------------------------------------
- * F38 | saveDocument — Menangani tombol simpan dokumen
+ * F39 | saveDocument
  * ----------------------------------------------------------------- */
 async function saveDocument() {
   await run(async () => { await persistEditor(); showToast('Perubahan disimpan.'); }, 'Menyimpan dokumen...');
 }
 
 /* -----------------------------------------------------------------
- * F39 | downloadBlob — Mengunduh file di browser
+ * F40 | downloadBlob
  * ----------------------------------------------------------------- */
 function downloadBlob(blob, name) {
   const url = URL.createObjectURL(blob);
@@ -855,7 +990,7 @@ function downloadBlob(blob, name) {
 }
 
 /* -----------------------------------------------------------------
- * F40 | exportDocument — Mengekspor PDF Word atau TXT
+ * F41 | exportDocument
  * ----------------------------------------------------------------- */
 async function exportDocument(format) {
   await run(async () => {
@@ -872,17 +1007,22 @@ async function exportDocument(format) {
 }
 
 /* -----------------------------------------------------------------
- * F41 | copyDocument — Menyalin isi dokumen
+ * F42 | copyDocument
  * ----------------------------------------------------------------- */
 async function copyDocument() {
-  try { await navigator.clipboard.writeText($('#editor-text').value); showToast('Teks disalin.'); }
-  catch (_) { $('#editor-text').select(); showToast('Tekan Ctrl+C atau gunakan menu salin pada perangkat.'); }
+  try {
+    await navigator.clipboard.writeText(document.querySelector('#editor-text').value);
+    showToast('Teks dokumen berhasil disalin.');
+  } catch (_) {
+    document.querySelector('#editor-text').select();
+    EduNotify.toast('Tekan Ctrl+C atau gunakan menu salin pada perangkat Anda.', {type: 'info'});
+  }
 }
 
 /* ==================== RIWAYAT, FAVORIT, SAMPAH ==================== */
 
 /* -----------------------------------------------------------------
- * F42 | renderHistory — Menampilkan riwayat favorit atau sampah
+ * F43 | renderHistory
  * ----------------------------------------------------------------- */
 function renderHistory(mode) {
   const names = {history: 'Riwayat dokumen', favorites: 'Favorit', trash: 'Sampah'};
@@ -905,7 +1045,7 @@ function renderHistory(mode) {
 }
 
 /* -----------------------------------------------------------------
- * F43 | renderDocumentResults — Menampilkan hasil filter dan halaman dokumen
+ * F44 | renderDocumentResults
  * ----------------------------------------------------------------- */
 function renderDocumentResults() {
   const f = state.filters;
@@ -948,21 +1088,34 @@ function renderDocumentResults() {
 }
 
 /* -----------------------------------------------------------------
- * F44 | mutateDocument — Mengubah favorit atau status sampah
+ * F45 | mutateDocument
  * ----------------------------------------------------------------- */
 async function mutateDocument(action, id, value) {
-  if (action === 'trashDocument' && value && !confirm('Pindahkan dokumen ke sampah? Dokumen dapat dipulihkan.')) return;
+  if (action === 'trashDocument') {
+    const accepted = await EduNotify.ask({
+      title: value ? 'Pindahkan ke sampah?' : 'Pulihkan dokumen?',
+      message: value
+        ? 'Dokumen akan dipindahkan ke sampah, bukan dihapus permanen. Anda dapat memulihkannya nanti.'
+        : 'Dokumen akan dikembalikan ke riwayat dan dapat dibuka kembali.',
+      confirmText: value ? 'Pindahkan ke sampah' : 'Pulihkan dokumen',
+      cancelText: 'Batal', danger: value
+    });
+    if (!accepted) return;
+  }
   await run(async () => {
     const doc = await api(action, {id, value});
     syncDocument(doc);
     renderDocumentResults();
+    showToast(action === 'trashDocument'
+      ? (value ? 'Dokumen dipindahkan ke sampah.' : 'Dokumen berhasil dipulihkan.')
+      : (value ? 'Dokumen ditambahkan ke favorit.' : 'Dokumen dihapus dari favorit.'));
   }, 'Memperbarui dokumen...');
 }
 
 /* ==================== PROFIL ==================== */
 
 /* -----------------------------------------------------------------
- * F45 | renderProfile — Menampilkan profil guru dan sekolah
+ * F46 | renderProfile
  * ----------------------------------------------------------------- */
 function renderProfile() {
   setRoute('profile', 'Profil guru & sekolah');
@@ -982,7 +1135,7 @@ function renderProfile() {
 }
 
 /* -----------------------------------------------------------------
- * F46 | saveProfile — Menyimpan profil
+ * F47 | saveProfile
  * ----------------------------------------------------------------- */
 async function saveProfile(form) {
   await run(async () => {
@@ -994,7 +1147,7 @@ async function saveProfile(form) {
 /* ==================== ADMIN: PENGGUNA ==================== */
 
 /* -----------------------------------------------------------------
- * F47 | renderUsers — Menampilkan manajemen akun
+ * F48 | renderUsers
  * ----------------------------------------------------------------- */
 function renderUsers() {
   setRoute('users', 'Manajemen pengguna');
@@ -1026,7 +1179,7 @@ function renderUsers() {
 }
 
 /* -----------------------------------------------------------------
- * F48 | editUser — Mengisi formulir perubahan akun
+ * F49 | editUser
  * ----------------------------------------------------------------- */
 function editUser(id) {
   const user = state.admin.users.find(item => item.id === id);
@@ -1040,23 +1193,30 @@ function editUser(id) {
 }
 
 /* -----------------------------------------------------------------
- * F49 | saveUser — Menyimpan akun pengguna
+ * F50 | saveUser
  * ----------------------------------------------------------------- */
 async function saveUser(form) {
   const values = formValues(form);
   values.active = form.elements.active.checked;
-  if (!confirm(`Simpan ${values.email} sebagai ${values.role} (${values.active ? 'aktif' : 'nonaktif'})?`)) return;
+  const accepted = await EduNotify.ask({
+    title: values.id ? 'Simpan perubahan akun?' : 'Tambahkan pengguna baru?',
+    message: `Nama: ${values.name}\nEmail: ${values.email}\nPeran: ${values.role === 'admin' ? 'Administrator' : 'Guru'}\nStatus: ${values.active ? 'Aktif' : 'Nonaktif'}`,
+    confirmText: values.id ? 'Simpan perubahan' : 'Tambahkan pengguna',
+    cancelText: 'Periksa kembali', icon: '♙'
+  });
+  if (!accepted) return;
   await run(async () => {
     await api('saveUser', values);
     state.admin = await api('adminData');
-    renderUsers(); showToast('Akun disimpan.');
+    renderUsers();
+    showToast(values.id ? 'Perubahan akun berhasil disimpan.' : 'Pengguna baru berhasil ditambahkan.');
   }, 'Menyimpan akun...');
 }
 
 /* ==================== ADMIN: PROVIDER & KUOTA ==================== */
 
 /* -----------------------------------------------------------------
- * F50 | renderSettings — Menampilkan pengaturan provider dan kuota
+ * F51 | renderSettings
  * ----------------------------------------------------------------- */
 function renderSettings() {
   setRoute('settings', 'Pengaturan AI & kuota');
@@ -1084,24 +1244,32 @@ function renderSettings() {
 }
 
 /* -----------------------------------------------------------------
- * F51 | saveProvider — Menyimpan konfigurasi provider AI
+ * F52 | saveProvider
  * ----------------------------------------------------------------- */
 async function saveProvider(form) {
   const values = formValues(form);
   values.enabled = form.elements.enabled.checked;
   values.clear = form.elements.clear.checked;
-  if (!confirm(`Simpan pengaturan ${title(values.id)}${values.clear ? ' dan hapus key lama' : ''}?`)) return;
+  const accepted = await EduNotify.ask({
+    title: values.clear ? 'Hapus API key tersimpan?' : 'Simpan konfigurasi AI?',
+    message: `Provider: ${title(values.id)}\nModel: ${values.model || '[belum diisi]'}\nStatus: ${values.enabled ? 'Aktif' : 'Nonaktif'}\n\n` +
+      (values.clear ? 'API key lama akan dihapus. Jangan aktifkan provider tanpa key yang valid.' : 'Konfigurasi ini akan digunakan untuk permintaan AI berikutnya.'),
+    confirmText: values.clear ? 'Hapus key & simpan' : 'Simpan konfigurasi',
+    cancelText: 'Batal', danger: values.clear, icon: '⚙'
+  });
+  if (!accepted) return;
   await run(async () => {
     await api('saveProvider', values);
     form.elements.key.value = '';
     state.admin = await api('adminData');
     applyBoot(await api('boot'));
-    renderSettings(); showToast('Pengaturan provider disimpan.');
+    renderSettings();
+    showToast('Konfigurasi provider berhasil disimpan.');
   }, 'Menyimpan provider...');
 }
 
 /* -----------------------------------------------------------------
- * F52 | testProvider — Menguji koneksi provider
+ * F53 | testProvider
  * ----------------------------------------------------------------- */
 async function testProvider(id) {
   await run(async () => {
@@ -1111,21 +1279,29 @@ async function testProvider(id) {
 }
 
 /* -----------------------------------------------------------------
- * F53 | saveSettings — Menyimpan batas penggunaan
+ * F54 | saveSettings
  * ----------------------------------------------------------------- */
 async function saveSettings(form) {
+  const values = formValues(form);
+  const accepted = await EduNotify.ask({
+    title: 'Ubah batas generate harian?',
+    message: `Batas baru: ${values.dailyLimit} percobaan per akun per hari WIB.\nBatas ini bukan pembatas tagihan uang atau token provider.`,
+    confirmText: 'Simpan kuota', cancelText: 'Batal', icon: '⚙'
+  });
+  if (!accepted) return;
   await run(async () => {
-    await api('saveSettings', formValues(form));
+    await api('saveSettings', values);
     state.admin = await api('adminData');
     applyBoot(await api('boot'));
-    renderSettings(); showToast('Batas penggunaan disimpan.');
+    renderSettings();
+    showToast('Batas penggunaan berhasil diperbarui.');
   }, 'Menyimpan pengaturan...');
 }
 
 /* ==================== ADMIN: LOG ==================== */
 
 /* -----------------------------------------------------------------
- * F54 | renderLogs — Menampilkan log aktivitas
+ * F55 | renderLogs
  * ----------------------------------------------------------------- */
 function renderLogs() {
   setRoute('logs', 'Log aktivitas');
@@ -1143,7 +1319,7 @@ function renderLogs() {
 /* ==================== BANTUAN ==================== */
 
 /* -----------------------------------------------------------------
- * F55 | renderHelp — Menampilkan panduan penggunaan
+ * F56 | renderHelp
  * ----------------------------------------------------------------- */
 function renderHelp() {
   setRoute('help', 'Panduan penggunaan');
@@ -1168,7 +1344,7 @@ function renderHelp() {
 /* ==================== EVENTS ==================== */
 
 /* -----------------------------------------------------------------
- * F56 | onClick — Menangani klik tombol aplikasi
+ * F57 | onClick
  * ----------------------------------------------------------------- */
 async function onClick(event) {
   const target = event.target.closest('[data-action]');
@@ -1196,7 +1372,7 @@ async function onClick(event) {
 }
 
 /* -----------------------------------------------------------------
- * F57 | onSubmit — Menangani pengiriman formulir
+ * F58 | onSubmit
  * ----------------------------------------------------------------- */
 function onSubmit(event) {
   const form = event.target.closest('[data-form]');
@@ -1209,7 +1385,7 @@ function onSubmit(event) {
 }
 
 /* -----------------------------------------------------------------
- * F58 | onInput — Menangani pengetikan dan pencarian
+ * F59 | onInput
  * ----------------------------------------------------------------- */
 function onInput(event) {
   const target = event.target;
@@ -1229,7 +1405,7 @@ function onInput(event) {
 }
 
 /* -----------------------------------------------------------------
- * F59 | onChange — Menangani perubahan filter
+ * F60 | onChange
  * ----------------------------------------------------------------- */
 function onChange(event) {
   if (event.target.id === 'doc-type') state.filters.type = event.target.value;
@@ -1240,7 +1416,7 @@ function onChange(event) {
 }
 
 /* -----------------------------------------------------------------
- * F60 | toggleTheme — Mengganti tema
+ * F61 | toggleTheme
  * ----------------------------------------------------------------- */
 function toggleTheme() {
   const dark = document.documentElement.dataset.theme !== 'dark';
@@ -1249,7 +1425,7 @@ function toggleTheme() {
 }
 
 /* -----------------------------------------------------------------
- * F61 | init — Inisialisasi aplikasi
+ * F62 | init
  * ----------------------------------------------------------------- */
 async function init() {
   document.documentElement.dataset.theme = localStorage.getItem(CONFIG.THEME_KEY) || 'light';
