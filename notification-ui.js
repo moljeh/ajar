@@ -233,7 +233,20 @@ async function renderGenerator(type) {
         ${field('curriculum', 'Kurikulum', '', {max: 150})}
         ${selectField('provider', 'Provider AI', providers)}
       </div>
-      ${textarea('reference', 'CP / TP / rujukan resmi / data anonim', 'Tempelkan sumber yang sudah diverifikasi; jangan masukkan identitas siswa.')}
+      
+	  ${textarea(
+  'reference',
+  'CP / TP / rujukan resmi / data anonim',
+  getReferenceExample(type)
+)}
+
+<p class="muted">
+  Contoh di dalam kolom hanya ilustrasi, bukan kutipan CP resmi.
+  Sesuaikan dengan konteks Anda dan jangan masukkan identitas
+  pribadi peserta didik.
+</p>
+	  
+	  
       ${textarea('instructions', 'Format / kebutuhan khusus / jumlah soal / catatan', 'Contoh: 10 soal pilihan ganda beserta pembahasan.')}
       <p class="muted">Guru: ${escapeHTML(state.user.name)} · Sekolah: ${escapeHTML(state.user.school || '[belum diisi]')}</p>
       <div class="row"><button class="btn btn-primary" type="submit" ${noProvider ? 'disabled' : ''}>✦ Generate & simpan draf</button>
