@@ -1004,7 +1004,25 @@ async function renderGenerator(type) {
  * F33 | generate
  * ----------------------------------------------------------------- */
 async function generate(form) {
-  const params = {...formValues(form), type: state.generatorType};
+  const values = formValues(form);
+  
+  // Tangkap nilai kelas dari dropdown atau input manual
+  let finalLevel = values.level_select || values.level;
+  if (finalLevel === 'Lainnya / Umum') {
+    finalLevel = values.level_custom;
+  }
+  
+  // Susun ulang parameter agar sesuai dengan permintaan backend
+  const params = {
+    ...values, 
+    level: finalLevel,
+    type: state.generatorType
+  };
+  
+  // Hapus variabel sementara agar bersih
+  delete params.level_select;
+  delete params.level_custom;
+
   await run(async () => {
     const result = await api('generate', params);
     state.editor = {doc: result.doc, text: result.text};
