@@ -765,81 +765,80 @@ function renderCategory(key) {
 
 /* ==================== FORM GENERATOR ==================== */
 
+
 /* -----------------------------------------------------------------
  * F31 | getReferenceExample
  * ----------------------------------------------------------------- */
 function getReferenceExample(type) {
-  // Tambahkan kode menu katalog lain di sini tanpa mengubah renderGenerator.
   const examples = {
-  "rpp": [
-    "TP: Peserta didik mampu membandingkan dua pecahan dengan penyebut berbeda menggunakan gambar dan menjelaskan alasannya.",
-    "Kondisi awal: Peserta didik mengenal pembilang dan penyebut, tetapi sebagian masih kesulitan membandingkan nilai pecahan.",
-    "CP / sumber: [Tempelkan kutipan CP resmi yang sesuai, judul dokumen, instansi penerbit, dan tahun.]"
-  ],
-  "modul_ajar": [
-    "TP: Peserta didik mampu menjelaskan perubahan wujud benda berdasarkan hasil pengamatan.",
-    "Data anonim: Dari 30 peserta didik, 20 sudah mengenali benda padat, cair, dan gas; 10 masih memerlukan contoh konkret.",
-    "Konteks: Pengamatan es yang mencair.",
-    "CP / sumber: [Tempelkan kutipan CP resmi yang sesuai beserta sumbernya.]"
-  ],
-  "atp": [
-    "CP resmi: [Tempelkan kutipan CP sesuai mata pelajaran dan fase beserta sumbernya.]",
-    "Urutan TP awal:\n1. Mengenali pembilang dan penyebut.\n2. Merepresentasikan pecahan menggunakan gambar.\n3. Membandingkan pecahan berpenyebut sama.\n4. Membandingkan pecahan berpenyebut berbeda.",
-    "Kemampuan awal: Peserta didik memahami pembagian benda menjadi bagian yang sama besar."
-  ],
-  "cp_rujukan": [
-    "Mata pelajaran: Matematika\nFase: B\nElemen: [Isi sesuai dokumen resmi.]",
-    "Kutipan CP: [Tempelkan teks CP dari dokumen resmi yang Anda gunakan.]",
-    "Sumber: [Judul dokumen, instansi penerbit, tahun, dan halaman atau bagian.]\nTautan: [Tambahkan jika tersedia.]",
-    "Ganti bagian dalam tanda kurung siku dengan sumber yang sebenarnya."
-  ],
-  "tp": [
-    "CP resmi: [Tempelkan kutipan CP yang menjadi dasar penyusunan TP beserta sumbernya.]",
-    "Fokus materi: Pecahan sederhana.",
-    "Kemampuan awal: Peserta didik sudah mengenal pembilang dan penyebut.",
-    "Kemampuan yang dituju: Membandingkan dua pecahan dan menjelaskan strategi yang digunakan."
-  ],
-  "kktp": [
-    "TP: Peserta didik mampu menulis satu paragraf deskripsi tentang benda di sekitarnya.",
-    "Bukti belajar: Paragraf deskripsi hasil tulisan peserta didik.",
-    "Aspek penilaian:\n1. Kejelasan objek.\n2. Kerincian ciri objek.\n3. Keruntutan kalimat.\n4. Ketepatan ejaan dan tanda baca.",
-    "Kondisi kelas: Sebagian peserta didik memerlukan bantuan mengembangkan kalimat."
-  ],
-  "lkpd": [
-    "TP: Peserta didik mampu mengelompokkan benda berdasarkan sifat bahan penyusunnya.",
-    "Kegiatan: Mengamati benda di kelas secara berkelompok.",
-    "Bahan: Kertas, kain, sendok logam, dan penggaris plastik.",
-    "Kemampuan awal: Peserta didik mengenal nama benda, tetapi belum terbiasa menjelaskan sifat bahannya.",
-    "CP / sumber: [Tempelkan kutipan sumber yang relevan jika diperlukan.]"
-  ],
-  "prota": [
-    "Mata pelajaran: Matematika\nKelas / fase: IV / B",
-    "Contoh data waktu: Semester ganjil 18 minggu efektif; semester genap 17 minggu efektif; alokasi 5 JP per minggu. Sesuaikan dengan kalender sekolah.",
-    "Lingkup materi: Bilangan, pecahan, pengukuran, dan geometri.",
-    "CP / daftar TP: [Tempelkan acuan yang digunakan.]",
-    "Kalender pendidikan: [Tempelkan data minggu efektif, libur, dan kegiatan sekolah yang telah diperiksa.]"
-  ],
-  "promes": [
-    "Semester: Ganjil",
-    "Contoh data waktu: 18 minggu efektif dan 5 JP per minggu. Sesuaikan dengan kalender sekolah.",
-    "Materi / TP:\n1. Bilangan: [TP dan alokasi waktu.]\n2. Pecahan: [TP dan alokasi waktu.]",
-    "Kegiatan sekolah / libur: [Cantumkan jadwal yang memengaruhi pembelajaran.]",
-    "Rujukan: [Tempelkan bagian Prota, ATP, dan kalender yang digunakan.]"
-  ],
-  "distribusi_tp": [
-    "Semester: Ganjil",
-    "Contoh waktu tersedia: 18 minggu efektif dan 5 JP per minggu. Sesuaikan dengan kondisi sekolah.",
-    "Daftar TP:\nTP 1: Mengenali pembilang dan penyebut.\nTP 2: Merepresentasikan pecahan menggunakan gambar.\nTP 3: Membandingkan pecahan berpenyebut sama.\nTP 4: Membandingkan pecahan berpenyebut berbeda.",
-    "Prioritas: Berikan waktu lebih banyak untuk TP 4.",
-    "Rujukan: [Tempelkan ATP dan data kalender sekolah yang digunakan.]"
-  ]
-};
+    // --- KELOMPOK PERENCANAAN ---
+    "rpp": [
+      "TP: Peserta didik mampu membandingkan dua pecahan dengan penyebut berbeda menggunakan gambar.",
+      "Kondisi awal: Sebagian masih kesulitan membandingkan nilai pecahan.",
+      "CP / sumber: [Tempelkan kutipan CP resmi]"
+    ],
+    "modul_ajar": [
+      "TP: Peserta didik mampu menjelaskan perubahan wujud benda.",
+      "Data anonim: Dari 30 peserta didik, 10 masih memerlukan contoh konkret.",
+      "Konteks: Pengamatan es yang mencair."
+    ],
+    "atp": [
+      "CP resmi: [Tempelkan kutipan CP sesuai mata pelajaran]",
+      "Urutan TP awal:\n1. Mengenali pembilang\n2. Membandingkan pecahan penyebut sama",
+      "Kemampuan awal: Peserta didik memahami pembagian benda."
+    ],
+    "tp": [
+      "CP resmi: [Tempelkan kutipan CP]",
+      "Fokus materi: Pecahan sederhana.",
+      "Kemampuan yang dituju: Membandingkan dua pecahan."
+    ],
+    
+    // --- KELOMPOK ASESMEN (BARU DITAMBAHKAN) ---
+    "bank_soal": [
+      "Indikator Soal:\n1. Peserta didik dapat menghitung luas segitiga (HOTS C4).\n2. Peserta didik dapat menentukan keliling persegi panjang (C3).",
+      "Konteks Bacaan: [Tempelkan teks bacaan singkat jika ada]",
+      "Kondisi: Hindari soal yang terlalu teoritis, fokus pada soal cerita kontekstual."
+    ],
+    "kisi_kisi": [
+      "Tujuan Pembelajaran: Menganalisis sistem pencernaan manusia.",
+      "Materi Pokok: Organ pencernaan dan fungsinya.",
+      "Sebaran Kognitif: 30% C3 (Penerapan), 50% C4 (Analisis), 20% C5 (Evaluasi)."
+    ],
+    "asesmen_diagnostik": [
+      "Tujuan asesmen: Mengetahui pemahaman dasar siswa tentang operasi hitung campuran sebelum masuk materi Aljabar.",
+      "Materi prasyarat: Penjumlahan, pengurangan, perkalian, dan pembagian bilangan bulat.",
+      "Konteks siswa: Latar belakang siswa beragam, butuh instrumen yang tidak mengintimidasi."
+    ],
+    "asesmen_formatif": [
+      "TP yang dinilai: Menyajikan hasil observasi lingkungan sekitar.",
+      "Bukti yang diharapkan: Jurnal singkat atau infografis sederhana.",
+      "Catatan: Fokus pada instrumen untuk memberikan umpan balik (feedback), bukan sekadar nilai angka."
+    ],
+    "asesmen_sumatif": [
+      "Lingkup Materi: Bab 1 hingga Bab 3 (Tata Surya, Bumi, Gerhana).",
+      "Kriteria Ketercapaian: Siswa mampu membedakan gerhana bulan dan matahari dengan minimal skor 75.",
+      "Catatan: Sertakan kunci jawaban dan pedoman penskoran di akhir dokumen."
+    ],
+
+    // --- KELOMPOK PROGRAM ---
+    "prota": [
+      "Mata pelajaran: Matematika\nKelas / fase: IV / B",
+      "Lingkup materi: Bilangan, pengukuran, dan geometri.",
+      "Kalender pendidikan: [Tempelkan data minggu efektif]"
+    ],
+    "promes": [
+      "Semester: Ganjil",
+      "Materi / TP:\n1. Bilangan: [Alokasi waktu]\n2. Pecahan: [Alokasi waktu]",
+      "Kegiatan sekolah: Jeda tengah semester di minggu ke-8."
+    ]
+  };
+
   const fallback = [
-    'TP: Peserta didik mampu membandingkan dua pecahan dan menjelaskan alasannya.',
-    'Data anonim: Dari 30 peserta didik, 18 sudah memahami materi, 8 memerlukan latihan tambahan, dan 4 memerlukan pendampingan.',
-    'CP / rujukan resmi: [Tempelkan kutipan sumber yang relevan, judul dokumen, instansi penerbit, dan tahun.]',
-    'Pilih hanya bagian yang sesuai dengan jenis dokumen ini.'
+    'Rujukan/Konteks:',
+    'Silakan tempelkan referensi materi, indikator, atau data pendukung lainnya yang relevan dengan dokumen ini.',
+    'Contoh: [Kutipan materi / TP / Catatan khusus / Kondisi kelas]'
   ];
+
   const parts = Object.prototype.hasOwnProperty.call(examples, type) ? examples[type] : fallback;
   return [
     `Contoh isian untuk ${title(type)}:`,
@@ -852,11 +851,42 @@ function getReferenceExample(type) {
  * F31.5 | getFormConfig (Menyesuaikan kolom berdasarkan jenis dokumen)
  * ----------------------------------------------------------------- */
 function getFormConfig(type, providers) {
+
+const classOptions = [
+    'PAUD / TK',
+    'Kelas 1 SD/MI (Fase A)',
+    'Kelas 2 SD/MI (Fase A)',
+    'Kelas 3 SD/MI (Fase B)',
+    'Kelas 4 SD/MI (Fase B)',
+    'Kelas 5 SD/MI (Fase C)',
+    'Kelas 6 SD/MI (Fase C)',
+    'Kelas 7 SMP/MTs (Fase D)',
+    'Kelas 8 SMP/MTs (Fase D)',
+    'Kelas 9 SMP/MTs (Fase D)',
+    'Kelas 10 SMA/SMK/MA (Fase E)',
+    'Kelas 11 SMA/SMK/MA (Fase F)',
+    'Kelas 12 SMA/SMK/MA (Fase F)',
+    'Lainnya / Umum'
+  ];
+
   const baseFields = `
     ${field('subject', 'Mata pelajaran *', '', {required: true, max: 150})}
-    ${field('level', 'Jenjang / kelas / fase *', '', {required: true, max: 100})}
+    
+    <label class="field">
+      <span>Jenjang / kelas / fase *</span>
+      <select name="level_select" id="level-select" required>
+        ${classOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+      </select>
+    </label>
+    
+    <div id="custom-level-container" style="display: none;">
+      ${field('level_custom', 'Ketikkan jenjang/kelas spesifik *', '', {max: 100})}
+    </div>
+    
     ${field('topic', 'Materi / topik *', '', {required: true, max: 200})}
   `;
+
+
   const providerField = selectField('provider', 'Provider AI', providers);
 
   let grid = '';
@@ -1311,16 +1341,46 @@ async function saveUser(form) {
  * ----------------------------------------------------------------- */
 function renderSettings() {
   setRoute('settings', 'Pengaturan AI & kuota');
-  const providers = state.admin.providers.map(provider => `
+  const providers = state.admin.providers.map(provider => {
+    
+    // Tentukan daftar model bawaan sesuai ID provider
+    let modelOptions = [];
+    if (provider.id === 'gemini') {
+      modelOptions = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'Lainnya'];
+    } else if (provider.id === 'openai') {
+      modelOptions = ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo', 'Lainnya'];
+    } else if (provider.id === 'claude') {
+      modelOptions = ['claude-3-5-sonnet-20240620', 'claude-3-opus-20240229', 'claude-3-haiku-20240307', 'Lainnya'];
+    }
+
+    // Cek apakah model yang tersimpan ada di daftar bawaan. Jika tidak, set ke 'Lainnya'.
+    const isCustomModel = provider.model && !modelOptions.includes(provider.model);
+    const selectValue = isCustomModel ? 'Lainnya' : (provider.model || '');
+
+    return `
     <form class="card" data-form="provider">
       <input type="hidden" name="id" value="${provider.id}">
       <div class="row between mb-20"><h2 class="mb-0">${escapeHTML(title(provider.id))}</h2>${badge(provider.configured ? 'Key tersimpan' : 'Belum diisi', provider.configured ? 'badge-success' : '')}</div>
-      ${field('model', 'ID model', provider.model, {max: 160, placeholder: 'Isi ID model dari akun provider'})}
+      
+      <label class="field">
+        <span>ID model</span>
+        <select name="model_select" class="provider-model-select">
+          <option value="">-- Pilih Model --</option>
+          ${modelOptions.map(opt => `<option value="${opt}" ${opt === selectValue ? 'selected' : ''}>${opt}</option>`).join('')}
+        </select>
+      </label>
+      
+      <div class="custom-model-container" style="display: ${isCustomModel ? 'block' : 'none'};">
+        ${field('model_custom', 'Ketikkan ID model spesifik', isCustomModel ? provider.model : '', {max: 160})}
+      </div>
+
       ${field('key', 'API key baru', '', {type: 'password', max: 2000, autocomplete: 'new-password', placeholder: 'Kosong = pertahankan key lama'})}
       ${check('enabled', 'Aktifkan provider', provider.enabled)}
       ${check('clear', 'Hapus key tersimpan')}
       <div class="row mt-20"><button class="btn btn-primary" type="submit">Simpan</button>${button('Tes koneksi', 'test-provider', `data-id="${provider.id}"`, 'btn-outline')}</div>
-    </form>`).join('');
+    </form>`;
+  }).join('');
+
   $('#content').innerHTML = `<div class="stack">
     ${pageHead('Pengaturan AI & kuota', 'Kunci API hanya disimpan di backend. Pilih ID model yang tersedia pada akun provider Anda.')}
     <div class="notice">API key disimpan sebagai teks biasa di Spreadsheet. Editor database/proyek dapat membacanya. Jangan membagikan akses sumber. Tes koneksi dapat dikenai biaya provider.</div>
@@ -1339,8 +1399,17 @@ function renderSettings() {
  * ----------------------------------------------------------------- */
 async function saveProvider(form) {
   const values = formValues(form);
+  
+  // Gabungkan nilai model AI
+  let finalModel = values.model_select;
+  if (finalModel === 'Lainnya') {
+    finalModel = values.model_custom;
+  }
+  values.model = finalModel;
+
   values.enabled = form.elements.enabled.checked;
   values.clear = form.elements.clear.checked;
+  
   const accepted = await EduNotify.ask({
     title: values.clear ? 'Hapus API key tersimpan?' : 'Simpan konfigurasi AI?',
     message: `Provider: ${title(values.id)}\nModel: ${values.model || '[belum diisi]'}\nStatus: ${values.enabled ? 'Aktif' : 'Nonaktif'}\n\n` +
@@ -1349,6 +1418,7 @@ async function saveProvider(form) {
     cancelText: 'Batal', danger: values.clear, icon: '⚙'
   });
   if (!accepted) return;
+  
   await run(async () => {
     await api('saveProvider', values);
     form.elements.key.value = '';
@@ -1503,9 +1573,44 @@ function onInput(event) {
  * F60 | onChange
  * ----------------------------------------------------------------- */
 function onChange(event) {
+  // Logika form generator (jenjang/kelas)
+  if (event.target.name === 'level_select') {
+    const customContainer = document.getElementById('custom-level-container');
+    const customInput = document.querySelector('input[name="level_custom"]');
+    
+    if (event.target.value === 'Lainnya / Umum') {
+      customContainer.style.display = 'block';
+      customInput.required = true;
+    } else {
+      customContainer.style.display = 'none';
+      customInput.required = false;
+      customInput.value = '';
+    }
+    return;
+  }
+
+  // Logika form provider AI (ID model)
+  if (event.target.name === 'model_select') {
+    const form = event.target.closest('form');
+    const customContainer = form.querySelector('.custom-model-container');
+    const customInput = form.querySelector('input[name="model_custom"]');
+    
+    if (event.target.value === 'Lainnya') {
+      customContainer.style.display = 'block';
+      customInput.required = true;
+    } else {
+      customContainer.style.display = 'none';
+      customInput.required = false;
+      customInput.value = '';
+    }
+    return;
+  }
+
+  // Logika bawaan filter riwayat dokumen
   if (event.target.id === 'doc-type') state.filters.type = event.target.value;
   else if (event.target.id === 'doc-provider') state.filters.provider = event.target.value;
   else return;
+  
   state.filters.page = 1;
   renderDocumentResults();
 }

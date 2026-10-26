@@ -762,12 +762,52 @@ tbody tr:last-child td {
     white-space:nowrap;
     text-overflow:ellipsis;
   }
-  textarea.editor {
+
+textarea.editor {
     min-height:440px;
     font-size:13px;
   }
+
+  /* KODE BARU: Tabel menjadi kartu di HP */
+  .table-wrap table, 
+  .table-wrap thead, 
+  .table-wrap tbody, 
+  .table-wrap tr, 
+  .table-wrap td {
+    display: block;
+    width: 100%;
+  }
+  .table-wrap thead {
+    display: none;
+  }
+  .table-wrap tr {
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--surface);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  }
+  .table-wrap td {
+    border-bottom: none;
+    padding: 6px 0;
+  }
+  .table-wrap td.doc-title {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .table-wrap td:last-child {
+    border-top: 1px dashed var(--line);
+    margin-top: 10px;
+    padding-top: 14px;
+    display: flex;
+    justify-content: flex-start;
+  }
 }
+
 @media(prefers-reduced-motion:reduce) {
+
+
   *,*::before,*::after {
     transition:none !important;
     animation-duration:.01ms !important;
