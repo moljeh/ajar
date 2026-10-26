@@ -127,16 +127,113 @@ const CATALOG = {
     ]
   }
 };
+
+
 const SCHEMA = Object.freeze({
-  Email: ['id', 'email', 'name', 'role', 'active', 'school'],
-  Providers: ['id', 'model', 'apiKey', 'enabled'],
-  Documents: ['id', 'owner', 'title', 'type', 'provider', 'created', 'updated', 'fileId', 'favorite', 'deleted', 'revision'],
-  Sessions: ['id', 'userId', 'expires'], Usage: ['id', 'userId', 'day', 'attempts'],
-  Settings: ['id', 'value'], Logs: ['id', 'email', 'action', 'target', 'created']
+  Email: [
+    'id', 'email', 'name', 'role', 'active', 'school'
+  ],
+
+  Providers: [
+    'id', 'model', 'apiKey', 'enabled'
+  ],
+
+  Documents: [
+    'id', 'owner', 'title', 'type', 'provider',
+    'created', 'updated', 'fileId',
+    'favorite', 'deleted', 'revision'
+  ],
+
+  Sessions: [
+    'id', 'userId', 'expires'
+  ],
+
+  Usage: [
+    'id', 'userId', 'day', 'attempts'
+  ],
+
+  Settings: [
+    'id', 'value'
+  ],
+
+  Logs: [
+    'id', 'email', 'action', 'target', 'created'
+  ],
+
+  QuotaRules: [
+    'userId',
+    'dailyLimit',
+    'monthlyAllowance',
+    'updated',
+    'updatedBy'
+  ],
+
+  QuotaOperations: [
+    'id',
+    'type',
+    'status',
+    'actorId',
+    'targetId',
+    'created',
+    'committedAt',
+    'note'
+  ],
+
+  QuotaLedger: [
+    'id',
+    'operationId',
+    'accountId',
+    'bucket',
+    'period',
+    'delta',
+    'type',
+    'actorId',
+    'requestId',
+    'created',
+    'note'
+  ],
+
+  AIRequests: [
+    'id',
+    'userId',
+    'provider',
+    'model',
+    'purpose',
+    'status',
+    'reservedTokens',
+    'inputTokens',
+    'outputTokens',
+    'totalTokens',
+    'usageSource',
+    'created',
+    'updated',
+    'documentId',
+    'errorCode'
+  ]
 });
+
+
 const PROVIDER_IDS = Object.freeze(['gemini', 'openai', 'claude']);
 const ROLES = Object.freeze(['guru', 'admin']);
 const QUESTION_TYPES = Object.freeze(['bank_soal', 'asesmen_diagnostik', 'asesmen_formatif', 'asesmen_sumatif']);
+
+const QUOTA_CONFIG = Object.freeze({
+  VERSION: '1',
+  VERSION_SETTING: 'quotaSchemaVersion',
+
+  ADMIN_ACCOUNT_ID: '__ADMIN_STOCK__',
+
+  // Belum diaktifkan sampai integrasi generate selesai.
+  ENFORCEMENT_SETTING: 'quotaEnforcementEnabled',
+
+  SHEETS: Object.freeze([
+    'QuotaRules',
+    'QuotaOperations',
+    'QuotaLedger',
+    'AIRequests'
+  ])
+});
+
 
 // Aset gambar, bukan key. Jangan mengedit potongan base64 secara manual.
 const MADASA_LOGO_PNG_BASE64 = [
@@ -634,31 +731,141 @@ function doPost(event) {
     return json_({success: true, data: dispatch_(r.action, r.params, user, r.token)});
   } catch (error) {
     const known = error.name === 'EduPlanError';
-    if (!known) console.error('Operasi internal gagal; jenis: ' + (error.name || 'Error'));
+       if (!known) {
+      // Simpan jenis error dan lokasi kode, bukan pesan mentah
+      // yang mungkin mengandung informasi sensitif.
+      const frames = String(error.stack || '')
+        .split('\n')
+        .filter(function (line) {
+          return /^\s*at\s/.test(line);
+        })
+        .slice(0, 8)
+        .join('\n');
+
+      console.error(
+        'Operasi internal gagal; jenis: ' +
+        String(error.name || 'Error') +
+        '\nLokasi:\n' +
+        (frames || 'Tidak tersedia')
+      );
+    }
     return json_({success: false, message: known ? error.message : 'Operasi server gagal. Periksa diagnostik dan izin layanan.', code: error.code || 'REQUEST_FAILED'});
   }
 }
 
+
 // ------------------------------------------------------------
 // FUNGSI 26 — dispatch_
-// Rute frontend tetap, rute admin diperiksa.
+// Rute frontend dan kuota; akses admin diperiksa.
 // ------------------------------------------------------------
 function dispatch_(action, params, user, token) {
   const routes = {
-    boot: function () { return boot_(user); }, logout: function () { return logout_(token); },
-    listDocuments: function () { return listDocuments_(user); }, generate: function () { return generate_(user, params); },
-    readDocument: function () { return readDocument_(user, params.id); }, saveDocument: function () { return saveDocument_(user, params); },
-    favoriteDocument: function () { return changeDocument_(user, params, 'favorite'); },
-    trashDocument: function () { return changeDocument_(user, params, 'deleted'); },
-    exportDocument: function () { return exportDocument_(user, params); }, saveProfile: function () { return saveProfile_(user, params); },
-    adminData: function () { requireAdmin_(user); return adminData_(); },
-    saveUser: function () { requireAdmin_(user); return saveUser_(user, params); },
-    saveProvider: function () { requireAdmin_(user); return saveProvider_(user, params); },
-    saveSettings: function () { requireAdmin_(user); return saveSettings_(user, params); },
-    testProvider: function () { requireAdmin_(user); return {text: callAI_(params.id, 'Jawab hanya: Koneksi berhasil.', CONFIG.TEST_OUTPUT_TOKENS)}; }
+    boot: function () {
+      return boot_(user);
+    },
+
+    logout: function () {
+      return logout_(token);
+    },
+
+    listDocuments: function () {
+      return listDocuments_(user);
+    },
+
+    generate: function () {
+      return generate_(user, params);
+    },
+
+    readDocument: function () {
+      return readDocument_(user, params.id);
+    },
+
+    saveDocument: function () {
+      return saveDocument_(user, params);
+    },
+
+    favoriteDocument: function () {
+      return changeDocument_(user, params, 'favorite');
+    },
+
+    trashDocument: function () {
+      return changeDocument_(user, params, 'deleted');
+    },
+
+    exportDocument: function () {
+      return exportDocument_(user, params);
+    },
+
+    saveProfile: function () {
+      return saveProfile_(user, params);
+    },
+
+    adminData: function () {
+      requireAdmin_(user);
+      return adminData_();
+    },
+
+    saveUser: function () {
+      requireAdmin_(user);
+      return saveUser_(user, params);
+    },
+
+    saveProvider: function () {
+      requireAdmin_(user);
+      return saveProvider_(user, params);
+    },
+
+    saveSettings: function () {
+      requireAdmin_(user);
+      return saveSettings_(user, params);
+    },
+
+    testProvider: function () {
+      requireAdmin_(user);
+
+      return {
+        text: callAI_(
+          params.id,
+          'Jawab hanya: Koneksi berhasil.',
+          CONFIG.TEST_OUTPUT_TOKENS,
+          {
+            userId: user.id,
+            purpose: 'connection_test'
+          }
+        )
+      };
+    },
+
+    // ==================== RUTE KUOTA ====================
+
+    quotaMine: function () {
+      return quotaMyBalance_(user);
+    },
+
+    quotaAdmin: function () {
+      requireAdmin_(user);
+      return quotaAdminOverview_(user);
+    },
+
+    quotaAddStock: function () {
+      requireAdmin_(user);
+      return quotaAddStock_(user, params);
+    },
+
+    quotaTransfer: function () {
+      requireAdmin_(user);
+      return quotaTransfer_(user, params);
+    }
   };
-  assert_(Object.prototype.hasOwnProperty.call(routes, action), 'Aksi tidak tersedia.'); return routes[action]();
+
+  assert_(
+    Object.prototype.hasOwnProperty.call(routes, action),
+    'Aksi tidak tersedia.'
+  );
+
+  return routes[action]();
 }
+
 
 // ------------------------------------------------------------
 // FUNGSI 27 — publicUser_
@@ -927,25 +1134,189 @@ function buildPrompt_(u, params) {
 
 // ------------------------------------------------------------
 // FUNGSI 46 — generate_
-// Generate AI, normalisasi, simpan Drive dan metadata.
+// Generate AI, simpan dokumen, hubungkan AIRequests.
+// Belum memotong saldo token.
 // ------------------------------------------------------------
 function generate_(u, params) {
-  assert_(Object.keys(CATALOG).some(function (k) { return CATALOG[k].items.indexOf(params.type) >= 0; }), 'Jenis dokumen tidak valid.');
-  ['subject', 'level', 'topic'].forEach(function (k) { assert_(typeof params[k] === 'string' && text_(params[k]), 'Mata pelajaran, kelas dan topik wajib diisi.'); });
-  assert_(JSON.stringify(params).length <= CONFIG.MAX_PROMPT_INPUT, 'Isian terlalu panjang.');
-  assert_(activeProviders_().some(function (p) { return p.id === params.provider; }), 'Pilih provider aktif.');
+  assert_(
+    Object.keys(CATALOG).some(function (key) {
+      return CATALOG[key].items.indexOf(params.type) >= 0;
+    }),
+    'Jenis dokumen tidak valid.'
+  );
+
+  ['subject', 'level', 'topic'].forEach(function (key) {
+    assert_(
+      typeof params[key] === 'string' &&
+      text_(params[key]),
+      'Mata pelajaran, kelas dan topik wajib diisi.'
+    );
+  });
+
+  assert_(
+    JSON.stringify(params).length <= CONFIG.MAX_PROMPT_INPUT,
+    'Isian terlalu panjang.'
+  );
+
+  assert_(
+    activeProviders_().some(function (provider) {
+      return provider.id === params.provider;
+    }),
+    'Pilih provider aktif.'
+  );
+
+  // Periksa konfigurasi folder sebelum memakai layanan AI.
+  const folderId = PropertiesService
+    .getScriptProperties()
+    .getProperty('FOLDER_ID');
+
+  assert_(folderId, 'Folder dokumen belum tersedia.');
+
+  const folder = DriveApp.getFolderById(folderId);
+
+  assert_(
+    !folder.isTrashed(),
+    'Folder dokumen berada di sampah.'
+  );
+
+  const requestId = uuid_();
+  const documentId = uuid_();
+
   reserveGenerate_(u);
+
+  let aiTextReady = false;
+  let documentRecorded = false;
+  let createdFileId = '';
+
   try {
-    const text = normalizeGeneratedText_(callAI_(params.provider, buildPrompt_(u, params), CONFIG.MAX_OUTPUT_TOKENS));
-    assert_(text && text.length <= CONFIG.MAX_TEXT, 'Hasil kosong/terlalu panjang.');
-    const id = uuid_(), timestamp = now_(), folderId = PropertiesService.getScriptProperties().getProperty('FOLDER_ID');
-    assert_(folderId, 'Folder dokumen belum tersedia.');
-    const file = DriveApp.getFolderById(folderId).createFile(id + '.txt', text, MimeType.PLAIN_TEXT);
-    const d = {id: id, owner: u.email, title: (params.type.replace(/_/g, ' ').toUpperCase() + ' — ' + text_(params.topic, 120)).slice(0, 180),
-      type: params.type, provider: params.provider, created: timestamp, updated: timestamp, fileId: file.getId(), favorite: false, deleted: false, revision: 1};
-    locked_(function () { add_('Documents', d); log_(u, 'generate', id); });
-    return {doc: publicDocument_(d), text: text, usage: usage_(u)};
-  } finally { CacheService.getScriptCache().remove('busy:' + u.id); }
+    const rawText = callAI_(
+      params.provider,
+      buildPrompt_(u, params),
+      CONFIG.MAX_OUTPUT_TOKENS,
+      {
+        requestId: requestId,
+        userId: u.id,
+        purpose: 'generate'
+      }
+    );
+
+    aiTextReady = true;
+
+    const text = normalizeGeneratedText_(rawText);
+
+    assert_(
+      text && text.length <= CONFIG.MAX_TEXT,
+      'Hasil kosong/terlalu panjang.'
+    );
+
+    const timestamp = now_();
+
+    const file = folder.createFile(
+      documentId + '.txt',
+      text,
+      MimeType.PLAIN_TEXT
+    );
+
+    createdFileId = file.getId();
+
+    const document = {
+      id: documentId,
+      owner: u.email,
+
+      title: (
+        params.type.replace(/_/g, ' ').toUpperCase() +
+        ' — ' +
+        text_(params.topic, 120)
+      ).slice(0, 180),
+
+      type: params.type,
+      provider: params.provider,
+      created: timestamp,
+      updated: timestamp,
+      fileId: createdFileId,
+      favorite: false,
+      deleted: false,
+      revision: 1
+    };
+
+    // Catat dokumen terlebih dahulu.
+    locked_(function () {
+      add_('Documents', document);
+      SpreadsheetApp.flush();
+    });
+
+    documentRecorded = true;
+
+    // Gagal menulis log tidak membatalkan dokumen yang sudah tersimpan.
+    try {
+      locked_(function () {
+        log_(u, 'generate', documentId);
+        SpreadsheetApp.flush();
+      });
+    } catch (_) {
+      console.error(
+        'Dokumen tersimpan, log aktivitas gagal: ' +
+        documentId
+      );
+    }
+
+    // Gagal menghubungkan AIRequests juga tidak menghapus dokumen.
+    try {
+      aiMarkDocumentSaved_(requestId, documentId);
+    } catch (_) {
+      console.error(
+        'Perlu rekonsiliasi AIRequests ' +
+        requestId +
+        ' dengan Documents ' +
+        documentId
+      );
+    }
+
+    return {
+      doc: publicDocument_(document),
+      text: text,
+      usage: usage_(u)
+    };
+
+  } catch (error) {
+    if (aiTextReady && !documentRecorded) {
+      try {
+        aiMarkDocumentFailed_(requestId, error);
+      } catch (_) {
+        console.error(
+          'Gagal mencatat status penyimpanan: ' +
+          requestId
+        );
+      }
+
+      if (createdFileId) {
+        // Jangan langsung hapus:
+        // penulisan Documents mungkin sudah terjadi
+        // meskipun proses konfirmasinya terputus.
+        console.error(
+          'Periksa file sebelum pembersihan: ' +
+          createdFileId +
+          '; calon Documents.id: ' +
+          documentId
+        );
+      }
+
+      assert_(
+        false,
+        'AI sudah menghasilkan teks, tetapi penyimpanan dokumen ' +
+        'belum dapat dikonfirmasi. Periksa riwayat sebelum generate ulang. ' +
+        'ID permintaan: ' + requestId,
+        'DOCUMENT_SAVE_FAILED'
+      );
+    }
+
+    throw error;
+
+  } finally {
+    CacheService
+      .getScriptCache()
+      .remove('busy:' + u.id);
+  }
 }
 
 /* ==================== F. PROVIDER AI DAN PESAN ERROR ==================== */
@@ -1053,17 +1424,145 @@ function parseAI_(id, data) {
   assert_(text.trim(), 'Provider tidak mengembalikan teks.', 'API_EMPTY'); return text;
 }
 
+
 // ------------------------------------------------------------
 // FUNGSI 55 — callAI_
-// Menggabungkan request, klasifikasi error dan jawaban.
+// Request AI, pencatatan metadata, dan pembacaan teks.
+// Tetap mengembalikan string agar pemanggil lama kompatibel.
 // ------------------------------------------------------------
-function callAI_(id, prompt, maxTokens) {
-  const p = configuredProvider_(id, true), response = fetchProvider_(p, prompt, maxTokens), status = response.getResponseCode(); let data;
-  try { data = JSON.parse(response.getContentText()); } catch (_) {
-    if (status >= 200 && status < 300) assert_(false, 'Respons bukan JSON.', 'API_RESPONSE'); data = {};
+function callAI_(id, prompt, maxTokens, context) {
+  const p = configuredProvider_(id, true);
+  const ctx = context || {};
+  const requestId = ctx.requestId || uuid_();
+  const timestamp = now_();
+
+  assert_(
+    typeof requestId === 'string' &&
+    /^[A-Za-z0-9_-]{16,100}$/.test(requestId),
+    'ID permintaan AI tidak valid.'
+  );
+
+  // Catat sebelum menghubungi provider.
+  // Jika pencatatan awal gagal, API tidak dipanggil.
+   locked_(function () {
+    assert_(
+      !all_('AIRequests').some(function (row) {
+        return row.id === requestId;
+      }),
+      'ID permintaan AI sudah digunakan.',
+      'CONFLICT'
+    );
+
+    add_('AIRequests', {
+      id: requestId,
+      userId: ctx.userId || '',
+      provider: p.id,
+      model: p.model,
+      purpose: ctx.purpose || 'unspecified',
+      status: 'started',
+      reservedTokens: 0,
+      inputTokens: '',
+      outputTokens: '',
+      totalTokens: '',
+      usageSource: 'unavailable',
+      created: timestamp,
+      updated: timestamp,
+      documentId: '',
+      errorCode: ''
+    });
+
+    SpreadsheetApp.flush();
+  });
+
+  let stage = 'network';
+
+  try {
+    const response = fetchProvider_(p, prompt, maxTokens);
+    const status = response.getResponseCode();
+
+    stage = 'response';
+
+    let data;
+
+    try {
+      data = JSON.parse(response.getContentText());
+    } catch (_) {
+      if (status >= 200 && status < 300) {
+        assert_(
+          false,
+          'Respons bukan JSON. Permintaan perlu diperiksa sebelum dikirim ulang.',
+          'API_RESPONSE'
+        );
+      }
+
+      data = {};
+    }
+
+    if (status < 200 || status >= 300) {
+      stage = 'http_error';
+
+      const error = providerError_(p, status, data);
+      assert_(false, error.message, error.code);
+    }
+
+    const usage = aiUsageMetadata_(id, data);
+
+    // Simpan metadata sebelum parseAI_:
+    // respons terpotong tetap dapat memiliki pemakaian token.
+    stage = 'usage_log';
+
+    aiUpdateRequest_(requestId, {
+      status: 'response_received',
+      inputTokens: usage.inputTokens === null
+        ? ''
+        : usage.inputTokens,
+      outputTokens: usage.outputTokens === null
+        ? ''
+        : usage.outputTokens,
+      totalTokens: usage.totalTokens === null
+        ? ''
+        : usage.totalTokens,
+      usageSource: usage.usageSource
+    });
+
+    stage = 'parse';
+
+    const text = parseAI_(id, data);
+
+    stage = 'final_log';
+
+    aiUpdateRequest_(requestId, {
+      status: usage.totalTokens === null
+        ? 'text_ready_usage_unknown'
+        : 'text_ready',
+      errorCode: ''
+    });
+
+    return text;
+
+  } catch (error) {
+    let requestStatus = 'needs_review';
+
+    if (stage === 'http_error') {
+      requestStatus = 'http_error';
+    } else if (stage === 'parse') {
+      requestStatus = 'text_rejected';
+    }
+
+    try {
+      aiUpdateRequest_(requestId, {
+        status: requestStatus,
+        errorCode: text_(error.code || 'REQUEST_FAILED', 100)
+      });
+    } catch (_) {
+      console.error(
+        'Gagal memperbarui catatan AIRequests: ' + requestId
+      );
+    }
+
+    // Jangan kirim ulang otomatis.
+    throw error;
   }
-  if (status < 200 || status >= 300) { const e = providerError_(p, status, data); assert_(false, e.message, e.code); }
-  return parseAI_(id, data);
 }
 
 /* ==================== G. JARAK, NOMOR DAN PARSER TABEL ==================== */
@@ -1712,4 +2211,754 @@ function buatTemplateNomorHalaman() {
   console.log('Opsional Different first page untuk header pertama kosong.');
   console.log('Setelah siap, isi TEMPLATE_DOC_ID dengan: ' + doc.getId());
   console.log('Fungsi ini belum memasang field nomor halaman dan tidak mengubah konfigurasi otomatis.');
+}
+
+
+
+/* ==================== M. MIGRASI DATABASE KUOTA ==================== */
+
+/**
+ * Jalankan dari editor Apps Script.
+ * Tidak tersedia sebagai rute HTTP.
+ *
+ * Menambahkan struktur kuota tanpa:
+ * - menghapus sheet lama;
+ * - membuat saldo awal;
+ * - mengalokasikan jatah;
+ * - mengaktifkan pemotongan token.
+ */
+function migrasiDatabaseKuota() {
+  const result = locked_(function () {
+    const props = PropertiesService.getScriptProperties();
+    const dbId = props.getProperty('DB_ID');
+
+    assert_(
+      dbId,
+      'DB_ID belum tersedia. Migrasi dihentikan.'
+    );
+
+    const db = SpreadsheetApp.openById(dbId);
+    const actorEmail = email_(
+      Session.getEffectiveUser().getEmail()
+    );
+
+    assert_(
+      actorEmail,
+      'Email pelaksana migrasi tidak terbaca.'
+    );
+
+    // Periksa database lama sebelum membuat perubahan.
+    const users = all_('Email');
+
+    const matches = users.filter(function (user) {
+      return email_(user.email) === actorEmail;
+    });
+
+    assert_(
+      matches.length === 1,
+      'Pelaksana harus memiliki tepat satu akun terdaftar.'
+    );
+
+    const actor = matches[0];
+
+    assert_(
+      actor.id &&
+      actor.role === 'admin' &&
+      truth_(actor.active),
+      'Migrasi hanya boleh dijalankan oleh admin aktif.'
+    );
+
+    const settings = all_('Settings');
+    const seenSettings = Object.create(null);
+
+    settings.forEach(function (row) {
+      const id = String(row.id || '');
+
+      assert_(
+        !seenSettings[id],
+        'ID pengaturan duplikat: ' + id
+      );
+
+      seenSettings[id] = true;
+    });
+
+    const version = settings.find(function (row) {
+      return row.id === QUOTA_CONFIG.VERSION_SETTING;
+    });
+
+    assert_(
+      !version ||
+      String(version.value) === QUOTA_CONFIG.VERSION,
+      'Versi database kuota berbeda. Migrasi dihentikan.'
+    );
+
+    // Preflight seluruh header baru sebelum menulis apa pun.
+    QUOTA_CONFIG.SHEETS.forEach(function (name) {
+      const sheet = db.getSheetByName(name);
+      if (!sheet || sheet.getLastRow() === 0) return;
+
+      const expected = SCHEMA[name];
+
+      assert_(
+        sheet.getLastColumn() === expected.length,
+        'Jumlah kolom tab ' + name +
+        ' tidak sesuai. Periksa sebelum melanjutkan.'
+      );
+
+      const actual = sheet
+        .getRange(1, 1, 1, expected.length)
+        .getValues()[0];
+
+      assert_(
+        expected.every(function (key, index) {
+          return String(actual[index]) === key;
+        }),
+        'Header tab ' + name +
+        ' tidak sesuai. Tidak ada header yang ditimpa.'
+      );
+    });
+
+    const created = [];
+
+    QUOTA_CONFIG.SHEETS.forEach(function (name) {
+      let sheet = db.getSheetByName(name);
+
+      if (!sheet) {
+        sheet = db.insertSheet(name);
+        created.push(name);
+      }
+
+      const heads = SCHEMA[name];
+
+      if (sheet.getMaxColumns() < heads.length) {
+        sheet.insertColumnsAfter(
+          sheet.getMaxColumns(),
+          heads.length - sheet.getMaxColumns()
+        );
+      }
+
+      if (sheet.getLastRow() === 0) {
+        sheet
+          .getRange(1, 1, 1, heads.length)
+          .setValues([heads]);
+      }
+
+      sheet.setFrozenRows(1);
+
+      sheet
+        .getRange(1, 1, 1, heads.length)
+        .setFontWeight('bold')
+        .setBackground('#eae7ff');
+    });
+
+    // Default aman: kuota baru belum diberlakukan.
+    if (!seenSettings[QUOTA_CONFIG.ENFORCEMENT_SETTING]) {
+      add_('Settings', {
+        id: QUOTA_CONFIG.ENFORCEMENT_SETTING,
+        value: 'false'
+      });
+    }
+
+    // Versi ditulis setelah struktur berhasil dibuat.
+    if (!version) {
+      add_('Settings', {
+        id: QUOTA_CONFIG.VERSION_SETTING,
+        value: QUOTA_CONFIG.VERSION
+      });
+    }
+
+    SpreadsheetApp.flush();
+
+    return {
+      databaseId: dbId,
+      version: QUOTA_CONFIG.VERSION,
+      createdSheets: created,
+      checkedSheets: QUOTA_CONFIG.SHEETS.slice(),
+      actor: actorEmail
+    };
+  });
+
+  console.log(JSON.stringify(result, null, 2));
+
+  return result;
+}
+
+/**
+ * Pemeriksaan struktur saja.
+ * Tidak menambah atau mengubah saldo.
+ */
+function periksaStrukturKuota() {
+  const props = PropertiesService.getScriptProperties();
+  const dbId = props.getProperty('DB_ID');
+
+  assert_(dbId, 'DB_ID belum tersedia.');
+
+  const db = SpreadsheetApp.openById(dbId);
+
+  const report = QUOTA_CONFIG.SHEETS.map(function (name) {
+    const sheet = db.getSheetByName(name);
+
+    if (!sheet || sheet.getLastRow() === 0) {
+      return {
+        sheet: name,
+        valid: false,
+        reason: 'Tab belum tersedia atau belum memiliki header.'
+      };
+    }
+
+    const expected = SCHEMA[name];
+
+    const actual = sheet
+      .getRange(1, 1, 1, expected.length)
+      .getValues()[0];
+
+    const valid =
+      sheet.getLastColumn() === expected.length &&
+      expected.every(function (key, index) {
+        return String(actual[index]) === key;
+      });
+
+    return {
+      sheet: name,
+      valid: valid,
+      dataRows: Math.max(0, sheet.getLastRow() - 1)
+    };
+  });
+
+  console.log(JSON.stringify(report, null, 2));
+
+  assert_(
+    report.every(function (item) {
+      return item.valid;
+    }),
+    'Struktur kuota belum lengkap atau header tidak cocok.'
+  );
+
+  return report;
+}
+
+
+/* ==================== N. STOK DAN TRANSFER KUOTA ==================== */
+
+/**
+ * Validasi jumlah token.
+ * Hanya menerima angka bulat positif yang aman.
+ */
+function quotaAmount_(value) {
+  assert_(
+    typeof value === 'number' || typeof value === 'string',
+    'Jumlah token tidak valid.'
+  );
+
+  assert_(
+    String(value).trim() !== '',
+    'Jumlah token wajib diisi.'
+  );
+
+  const amount = Number(value);
+
+  assert_(
+    Number.isSafeInteger(amount) && amount > 0,
+    'Jumlah token harus berupa bilangan bulat positif.'
+  );
+
+  return amount;
+}
+
+/**
+ * Periode kuota bulanan berdasarkan WIB.
+ */
+function quotaMonth_() {
+  return Utilities.formatDate(
+    new Date(),
+    CONFIG.TIME_ZONE,
+    'yyyy-MM'
+  );
+}
+
+/**
+ * Snapshot saldo dari transaksi yang sudah committed.
+ *
+ * Harus dipanggil di dalam locked_() saat dipakai
+ * untuk keputusan transfer atau pembaruan saldo.
+ */
+function quotaSnapshot_() {
+  const committed = Object.create(null);
+
+  all_('QuotaOperations').forEach(function (operation) {
+    if (operation.status === 'committed') {
+      committed[operation.id] = true;
+    }
+  });
+
+  const balances = Object.create(null);
+
+  all_('QuotaLedger').forEach(function (entry) {
+    if (!committed[entry.operationId]) return;
+
+    const delta = Number(entry.delta);
+
+    assert_(
+      Number.isSafeInteger(delta),
+      'Data transaksi kuota tidak valid: ' + entry.id
+    );
+
+    const key = JSON.stringify([
+      String(entry.accountId),
+      String(entry.bucket),
+      String(entry.period || '')
+    ]);
+
+    const next = (balances[key] || 0) + delta;
+
+    assert_(
+      Number.isSafeInteger(next),
+      'Saldo kuota melebihi batas angka aman.'
+    );
+
+    balances[key] = next;
+  });
+
+  return {
+    balance: function (accountId, bucket, period) {
+      const key = JSON.stringify([
+        String(accountId),
+        String(bucket),
+        String(period || '')
+      ]);
+
+      return balances[key] || 0;
+    }
+  };
+}
+
+/**
+ * ID wajib berasal dari frontend dan digunakan kembali
+ * jika mengulang permintaan yang sama.
+ */
+function quotaOperationId_(value) {
+  assert_(
+    typeof value === 'string' &&
+    /^[A-Za-z0-9_-]{16,100}$/.test(value),
+    'ID transaksi tidak valid.'
+  );
+
+  return value;
+}
+
+/**
+ * Pembukuan operasi.
+ *
+ * Dipanggil hanya di dalam locked_().
+ * Operasi pending tidak ikut dihitung sebagai saldo.
+ */
+function quotaCommit_(id, type, actor, targetId, note, entries) {
+  const created = now_();
+
+  const fingerprint = JSON.stringify({
+    type: type,
+    actorId: actor.id,
+    targetId: targetId,
+    note: note,
+    entries: entries
+  });
+
+  const operation = {
+    id: id,
+    type: type,
+    status: 'pending',
+    actorId: actor.id,
+    targetId: targetId,
+    created: created,
+    committedAt: '',
+
+    // Fingerprint disimpan untuk memeriksa pengulangan identik.
+    note: fingerprint
+  };
+
+  add_('QuotaOperations', operation);
+
+  entries.forEach(function (entry) {
+    add_('QuotaLedger', {
+      id: uuid_(),
+      operationId: id,
+      accountId: entry.accountId,
+      bucket: entry.bucket,
+      period: entry.period || '',
+      delta: entry.delta,
+      type: type,
+      actorId: actor.id,
+      requestId: '',
+      created: created,
+      note: note
+    });
+  });
+
+  // Semua baris ledger ditulis sebelum status committed.
+  SpreadsheetApp.flush();
+
+  const saved = all_('QuotaOperations').find(function (row) {
+    return row.id === id;
+  });
+
+  assert_(saved, 'Operasi kuota tidak ditemukan.');
+
+  saved.status = 'committed';
+  saved.committedAt = now_();
+
+  put_('QuotaOperations', saved);
+  SpreadsheetApp.flush();
+
+  return {
+    operationId: id,
+    status: 'committed',
+    repeated: false
+  };
+}
+
+/**
+ * Mencegah permintaan yang sama dicatat dua kali.
+ *
+ * Dipanggil hanya di dalam locked_().
+ */
+function quotaCheckRepeat_(id, type, actor, targetId, note, entries) {
+  const operations = all_('QuotaOperations');
+
+  const matching = operations.filter(function (row) {
+    return row.id === id;
+  });
+
+  assert_(
+    matching.length <= 1,
+    'ID operasi duplikat. Perlu pemeriksaan admin.',
+    'QUOTA_REVIEW'
+  );
+
+  if (!matching.length) return null;
+
+  const existing = matching[0];
+
+  const fingerprint = JSON.stringify({
+    type: type,
+    actorId: actor.id,
+    targetId: targetId,
+    note: note,
+    entries: entries
+  });
+
+  assert_(
+    existing.type === type &&
+    existing.actorId === actor.id &&
+    existing.targetId === targetId &&
+    existing.note === fingerprint,
+    'ID transaksi sudah dipakai untuk isi transaksi berbeda.',
+    'CONFLICT'
+  );
+
+  assert_(
+    existing.status === 'committed',
+    'Transaksi sebelumnya belum selesai. Jangan membuat transaksi pengganti sebelum diperiksa.',
+    'QUOTA_REVIEW'
+  );
+
+  return {
+    operationId: id,
+    status: 'committed',
+    repeated: true
+  };
+}
+
+/**
+ * Jangan lanjut menulis jika ada operasi belum selesai.
+ * Pendekatan konservatif untuk tahap awal.
+ */
+function quotaAssertNoPending_() {
+  const unresolved = all_('QuotaOperations').find(function (row) {
+    return row.status !== 'committed' &&
+      row.status !== 'cancelled';
+  });
+
+  assert_(
+    !unresolved,
+    'Ada transaksi kuota yang perlu diperiksa: ' +
+      (unresolved ? unresolved.id : ''),
+    'QUOTA_REVIEW'
+  );
+}
+
+/**
+ * Membaca saldo sendiri.
+ * Belum menghitung cadangan AI karena belum diaktifkan.
+ */
+function quotaMyBalance_(user) {
+  return locked_(function () {
+    const snapshot = quotaSnapshot_();
+    const period = quotaMonth_();
+
+    const monthly = snapshot.balance(
+      user.id, 'monthly', period
+    );
+
+    const topup = snapshot.balance(
+      user.id, 'topup', ''
+    );
+
+    assert_(
+      Number.isSafeInteger(monthly + topup),
+      'Saldo melebihi batas angka aman.'
+    );
+
+    return {
+      userId: user.id,
+      period: period,
+      monthlyRemaining: monthly,
+      topupRemaining: topup,
+      reservedTokens: 0,
+      availableTokens: monthly + topup,
+      enforcementEnabled: false
+    };
+  });
+}
+
+/**
+ * Ringkasan admin.
+ */
+function quotaAdminOverview_(admin) {
+  requireAdmin_(admin);
+
+  return locked_(function () {
+    const snapshot = quotaSnapshot_();
+    const period = quotaMonth_();
+
+    const users = all_('Email').filter(function (user) {
+      return user.role === 'guru';
+    }).map(function (user) {
+      const monthly = snapshot.balance(
+        user.id, 'monthly', period
+      );
+
+      const topup = snapshot.balance(
+        user.id, 'topup', ''
+      );
+
+      return {
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        active: truth_(user.active),
+        monthlyRemaining: monthly,
+        topupRemaining: topup,
+        availableTokens: monthly + topup
+      };
+    });
+
+    return {
+      period: period,
+      adminStock: snapshot.balance(
+        QUOTA_CONFIG.ADMIN_ACCOUNT_ID,
+        'stock',
+        ''
+      ),
+      users: users,
+      unresolvedOperations: all_('QuotaOperations')
+        .filter(function (row) {
+          return row.status !== 'committed' &&
+            row.status !== 'cancelled';
+        })
+        .map(function (row) {
+          return {
+            id: row.id,
+            type: row.type,
+            status: row.status,
+            created: row.created
+          };
+        })
+    };
+  });
+}
+
+/**
+ * Mencatat penambahan stok INTERNAL.
+ * Bukan pembelian kredit provider.
+ */
+function quotaAddStock_(admin, params) {
+  requireAdmin_(admin);
+
+  const id = quotaOperationId_(params.operationId);
+  const amount = quotaAmount_(params.amount);
+  const note = text_(params.note, 500);
+
+  assert_(note, 'Keterangan asal stok wajib diisi.');
+
+  const entries = [{
+    accountId: QUOTA_CONFIG.ADMIN_ACCOUNT_ID,
+    bucket: 'stock',
+    period: '',
+    delta: amount
+  }];
+
+  return locked_(function () {
+    const repeated = quotaCheckRepeat_(
+      id, 'stock_in', admin,
+      QUOTA_CONFIG.ADMIN_ACCOUNT_ID, note, entries
+    );
+
+    if (repeated) return repeated;
+
+    quotaAssertNoPending_();
+
+    const stock = quotaSnapshot_().balance(
+      QUOTA_CONFIG.ADMIN_ACCOUNT_ID, 'stock', ''
+    );
+
+    assert_(
+      Number.isSafeInteger(stock + amount),
+      'Stok melebihi batas angka aman.'
+    );
+
+    return quotaCommit_(
+      id, 'stock_in', admin,
+      QUOTA_CONFIG.ADMIN_ACCOUNT_ID, note, entries
+    );
+  });
+}
+
+/**
+ * Memindahkan stok admin ke saldo isi ulang guru.
+ */
+function quotaTransfer_(admin, params) {
+  requireAdmin_(admin);
+
+  const id = quotaOperationId_(params.operationId);
+  const amount = quotaAmount_(params.amount);
+  const targetId = text_(params.userId, 100);
+  const note = text_(params.note, 500);
+
+  assert_(targetId, 'Pilih guru penerima.');
+  assert_(note, 'Keterangan transfer wajib diisi.');
+
+  const entries = [
+    {
+      accountId: QUOTA_CONFIG.ADMIN_ACCOUNT_ID,
+      bucket: 'stock',
+      period: '',
+      delta: -amount
+    },
+    {
+      accountId: targetId,
+      bucket: 'topup',
+      period: '',
+      delta: amount
+    }
+  ];
+
+  return locked_(function () {
+    const repeated = quotaCheckRepeat_(
+      id, 'transfer_topup', admin, targetId, note, entries
+    );
+
+    if (repeated) return repeated;
+
+    quotaAssertNoPending_();
+
+    const matches = all_('Email').filter(function (user) {
+      return user.id === targetId;
+    });
+
+    assert_(
+      matches.length === 1 &&
+      matches[0].role === 'guru' &&
+      truth_(matches[0].active),
+      'Penerima harus satu akun guru aktif yang valid.'
+    );
+
+    const snapshot = quotaSnapshot_();
+
+    const stock = snapshot.balance(
+      QUOTA_CONFIG.ADMIN_ACCOUNT_ID, 'stock', ''
+    );
+
+    assert_(
+      stock >= amount,
+      'Stok admin tidak mencukupi.',
+      'QUOTA_INSUFFICIENT'
+    );
+
+    const topup = snapshot.balance(
+      targetId, 'topup', ''
+    );
+
+    const monthly = snapshot.balance(
+      targetId, 'monthly', quotaMonth_()
+    );
+
+    assert_(
+      Number.isSafeInteger(topup + amount) &&
+      Number.isSafeInteger(monthly + topup + amount),
+      'Saldo penerima melebihi batas angka aman.'
+    );
+
+    return quotaCommit_(
+      id, 'transfer_topup', admin,
+      targetId, note, entries
+    );
+  });
+}
+
+
+/* ==================== P. HUBUNGAN PERMINTAAN DAN DOKUMEN ==================== */
+
+/**
+ * Menandai bahwa dokumen dan metadata Documents
+ * sudah berhasil ditulis.
+ */
+function aiMarkDocumentSaved_(requestId, documentId) {
+  return locked_(function () {
+    const matches = all_('AIRequests').filter(function (row) {
+      return row.id === requestId;
+    });
+
+    assert_(
+      matches.length === 1,
+      'Catatan permintaan AI tidak unik.',
+      'AI_USAGE_LOG'
+    );
+
+    const row = matches[0];
+
+    assert_(
+      row.status === 'text_ready' ||
+      row.status === 'text_ready_usage_unknown',
+      'Status permintaan AI belum siap dihubungkan ke dokumen.',
+      'AI_USAGE_LOG'
+    );
+
+    row.documentId = documentId;
+
+    row.status =
+      row.usageSource === 'provider_metadata' &&
+      aiTokenNumber_(row.totalTokens) !== null
+        ? 'document_saved'
+        : 'document_saved_usage_unknown';
+
+    row.updated = now_();
+    row.errorCode = '';
+
+    put_('AIRequests', row);
+    SpreadsheetApp.flush();
+  });
+}
+
+/**
+ * Menandai kegagalan setelah AI menghasilkan teks.
+ * Metadata token tidak dihapus.
+ */
+function aiMarkDocumentFailed_(requestId, error) {
+  return aiUpdateRequest_(requestId, {
+    status: 'document_save_failed',
+    errorCode: text_(
+      error.code || 'DOCUMENT_SAVE_FAILED',
+      100
+    )
+  });
 }

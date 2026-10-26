@@ -79,7 +79,7 @@
 'use strict';
 
 const CONFIG = Object.freeze({
-  API_URL: 'https://script.google.com/macros/s/AKfycbwNp8t0AWKOQGSN1CztP82eeHEa9jrxJiQz4i4t1qtWaPUze3ErAxaHzS3jjn0IXxcjog/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxtL3oHie3_MH0LOxEbfScqsKD2-YiPrZ4DXhmh10CIu_32o-FuKmyrufDauFZjDWCv_g/exec',
   SESSION_KEY: 'eduplan-session',
   THEME_KEY: 'eduplan-theme',
   PAGE_SIZE: 12
