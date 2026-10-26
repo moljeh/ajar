@@ -79,7 +79,7 @@
 'use strict';
 
 const CONFIG = Object.freeze({
-  API_URL: 'https://script.google.com/macros/s/AKfycbzdTckb8kFOwkBHs-LU2b3pzVHbJ_x3ffem-2pZ2oGJVnwhs5fx7DiBmhDiGzAXyRXi/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbwNp8t0AWKOQGSN1CztP82eeHEa9jrxJiQz4i4t1qtWaPUze3ErAxaHzS3jjn0IXxcjog/exec',
   SESSION_KEY: 'eduplan-session',
   THEME_KEY: 'eduplan-theme',
   PAGE_SIZE: 12
@@ -106,7 +106,8 @@ const state = {
   busy: false,
   admin: null,
   filters: {query: '', type: '', provider: '', page: 1},
-  toastTimer: null
+  toastTimer: null,
+  tempReference: '' // <-- TAMBAHKAN BARIS INI
 };
 
 /**
@@ -848,38 +849,125 @@ function getReferenceExample(type) {
 }
 
 /* -----------------------------------------------------------------
- * F32 | renderGenerator
+ * F31.5 | getFormConfig (Menyesuaikan kolom berdasarkan jenis dokumen)
+ * ----------------------------------------------------------------- */
+function getFormConfig(type, providers) {
+  const baseFields = `
+    ${field('subject', 'Mata pelajaran *', '', {required: true, max: 150})}
+    ${field('level', 'Jenjang / kelas / fase *', '', {required: true, max: 100})}
+    ${field('topic', 'Materi / topik *', '', {required: true, max: 200})}
+  `;
+  const providerField = selectField('provider', 'Provider AI', providers);
+
+  let grid = '';
+  let textareas = '';
+
+  switch (type) {
+    case 'rpp':
+    case 'modul_ajar':
+    case 'rencana_harian':
+    case 'rencana_mingguan':
+    case 'tp':
+    case 'atp':
+      grid = `
+        ${field('duration', 'Alokasi waktu (JP/Menit)', '', {max: 150})}
+        ${field('curriculum', 'Kurikulum (Merdeka/K13)', '', {max: 150})}
+      `;
+      textareas = `
+       ${textarea('reference', 'Rujukan Materi', getReferenceExample(type))}
+       ${textarea('instructions', 'Kebutuhan Khusus (Misal: Gunakan metode Problem Based Learning)', 'Contoh: Rancang dengan metode PBL dan masukkan asesmen formatif.')}
+      `;
+      break;
+
+    case 'bank_soal':
+    case 'kisi_kisi':
+    case 'asesmen_sumatif':
+    case 'asesmen_formatif':
+    case 'asesmen_diagnostik':
+      grid = `
+        ${field('jumlah_soal', 'Jumlah Soal', '', {type: 'number', max: 100})}
+        ${selectField('bentuk_soal', 'Bentuk Soal', ['Pilihan Ganda', 'Uraian', 'Isian Singkat', 'Campuran'])}
+      `;
+      textareas = `
+        ${textarea('reference', 'Indikator Soal / Kisi-kisi / Teks Bacaan', getReferenceExample(type))}
+        ${textarea('instructions', 'Level Kognitif / Format (Misal: Buat soal HOTS C4-C6)', 'Contoh: 10 soal pilihan ganda level HOTS beserta kunci jawaban.')}
+      `;
+      break;
+
+    case 'prota':
+    case 'promes':
+    case 'kalender_pendidikan':
+    case 'distribusi_tp':
+      grid = `
+        ${field('year', 'Tahun ajaran', '', {max: 40})}
+        ${selectField('semester', 'Semester', ['Ganjil', 'Genap'])}
+      `;
+      textareas = `
+        ${textarea('reference', 'Data Kalender Pendidikan / Total Minggu Efektif', getReferenceExample(type))}
+        ${textarea('instructions', 'Catatan Libur / Jadwal Ujian', 'Contoh: Masukkan jadwal PTS di minggu ke-8 dan libur nasional.')}
+      `;
+      break;
+
+    default:
+      grid = `
+        ${field('year', 'Tahun ajaran', '', {max: 40})}
+        ${selectField('semester', 'Semester', ['Ganjil', 'Genap'])}
+        ${field('duration', 'Keterangan waktu / Periode', '', {max: 150})}
+      `;
+      textareas = `
+        ${textarea('reference', 'Rujukan resmi / Data mentah (opsional)', getReferenceExample(type))}
+        ${textarea('instructions', 'Format laporan / Kebutuhan khusus', 'Contoh: Buatkan dalam bentuk tabel yang mudah dibaca.')}
+      `;
+      break;
+  }
+
+  return { formGrid: baseFields + grid + providerField, textareas: textareas };
+}
+
+/* -----------------------------------------------------------------
+ * F32 | renderGenerator (Memasukkan teks ke Value secara nyata)
  * ----------------------------------------------------------------- */
 async function renderGenerator(type) {
   if (!(await mayLeave())) return;
   state.generatorType = type;
   setRoute('generator', `Generator / ${title(type)}`);
+  
   const providers = state.providers.map(p => ({value: p.id, text: `${title(p.id)} · ${p.model}`}));
   const noProvider = providers.length === 0;
+  
+  const config = getFormConfig(type, providers);
+
   document.querySelector('#content').innerHTML = `<div class="stack">
     ${pageHead(`Generator ${title(type)}`, 'Lengkapi konteks pembelajaran agar draf lebih relevan.')}
     <div class="notice">Isian dikirim ke provider pilihan Anda. Gunakan data anonim dan rujukan terverifikasi.</div>
     <form class="card" data-form="generate">
       <h2>Konteks dokumen</h2>
+      
       <div class="form-grid">
-        ${field('subject', 'Mata pelajaran *', '', {required: true, max: 150})}
-        ${field('level', 'Jenjang / kelas / fase *', '', {required: true, max: 100})}
-        ${field('topic', 'Materi / topik *', '', {required: true, max: 200})}
-        ${field('year', 'Tahun ajaran', '', {max: 40})}
-        ${selectField('semester', 'Semester', ['Ganjil', 'Genap'])}
-        ${field('duration', 'Alokasi waktu / pertemuan', '', {max: 150})}
-        ${field('curriculum', 'Kurikulum', '', {max: 150})}
-        ${selectField('provider', 'Provider AI', providers)}
+        ${config.formGrid}
       </div>
-      ${textarea('reference', 'CP / TP / rujukan resmi / data anonim', getReferenceExample(type))}
-      <p class="muted">Contoh di dalam kolom hanya ilustrasi, bukan kutipan CP resmi. Sesuaikan dengan konteks Anda dan jangan masukkan identitas pribadi peserta didik.</p>
-      ${textarea('instructions', 'Format / kebutuhan khusus / jumlah soal / catatan', 'Contoh: 10 soal pilihan ganda beserta pembahasan.')}
-      <p class="muted">Guru: ${escapeHTML(state.user.name)} · Sekolah: ${escapeHTML(state.user.school || '[belum diisi]')}</p>
-      <div class="row"><button class="btn btn-primary" type="submit" ${noProvider ? 'disabled' : ''}>✦ Generate & simpan draf</button>
-        ${button('Profil guru & sekolah', 'navigate', 'data-route="profile"', 'btn-outline')}</div>
+      
+      ${config.textareas}
+      
+      <p class="muted">Contoh di dalam kolom hanya ilustrasi. Guru: ${escapeHTML(state.user.name)} · Sekolah: ${escapeHTML(state.user.school || '[belum diisi]')}</p>
+      
+      <div class="row">
+        <button class="btn btn-primary" type="submit" ${noProvider ? 'disabled' : ''}>✦ Generate & simpan draf</button>
+        ${button('Profil guru & sekolah', 'navigate', 'data-route="profile"', 'btn-outline')}
+      </div>
       ${noProvider ? '<p class="notice mt-20">Belum ada provider aktif. Hubungi admin.</p>' : ''}
     </form>
   </div>`;
+  
+  // INI KUNCINYA: Jika ada memori rujukan, paksa masuk sebagai nilai asli (value) kotak teks
+  if (state.tempReference) {
+    const referenceField = document.querySelector('textarea[name="reference"]');
+    if (referenceField) {
+      referenceField.value = state.tempReference;
+    }
+    // Kosongkan memori agar tidak terus menempel jika guru membuka menu lain
+    state.tempReference = '';
+  }
 }
 
 /* -----------------------------------------------------------------
@@ -926,13 +1014,16 @@ function renderEditor() {
     <div class="notice">Ekspor menggunakan teks sederhana. Tabel kompleks, kop surat, dan slide tidak diformat otomatis. Simpan perubahan sebelum menutup halaman.</div>
     <form class="card" data-form="save-document">
       ${field('title', 'Judul dokumen', doc.title, {required: true, max: 180})}
-      <div class="row mb-20">
+   <div class="row mb-20">
         <button class="btn btn-primary" type="submit">Simpan perubahan</button>
         ${button('Unduh PDF', 'export', 'data-format="pdf"')}
         ${button('Unduh Word', 'export', 'data-format="docx"')}
-        ${button('Unduh TXT', 'export', 'data-format="txt"', 'btn-outline')}
         ${button('Salin teks', 'copy', '', 'btn-outline')}
+        
+        <!-- TOMBOL BARU UNTUK MENGHUBUNGKAN DOKUMEN -->
+        ${button('✦ Jadikan Rujukan AI', 'use-as-reference', 'title="Buat dokumen lanjutan (misal: soal) dari isi ini"', 'btn-outline')}
       </div>
+	  
       <label class="field"><span>Isi dokumen</span><textarea class="editor" name="text" id="editor-text" maxlength="150000"></textarea></label>
       <div class="row between"><small id="editor-status" class="muted">Tersimpan · revisi ${doc.revision}</small><small class="muted">Maksimum 150.000 karakter</small></div>
     </form>
@@ -1366,7 +1457,11 @@ async function onClick(event) {
     case 'page': state.filters.page = Number(data.page); renderDocumentResults(); return;
     case 'edit-user': return editUser(data.id);
     case 'new-user': return renderUsers();
-    case 'test-provider': return testProvider(data.id);
+   case 'test-provider': return testProvider(data.id);
+    case 'use-as-reference': 
+      state.tempReference = document.querySelector('#editor-text').value;
+      showToast('Isi dokumen disimpan ke memori AI. Silakan pilih jenis dokumen selanjutnya (misal: Bank Soal).');
+      return navigate('dashboard'); // Kembali ke halaman utama untuk memilih generator baru
     default: return;
   }
 }
