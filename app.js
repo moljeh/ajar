@@ -652,7 +652,9 @@ function setRoute(route, text, category = '') {
   state.route = route;
   state.category = category;
   $('#breadcrumb').textContent = text;
-  document.body.classList.remove('menu-open');
+  
+  if (document.body.classList.contains('menu-open')) history.back();
+  
   document.querySelectorAll('.nav-item[data-route]').forEach(item => {
     const active = item.dataset.route === route && (route !== 'category' || item.dataset.category === category);
     item.classList.toggle('active', active);
@@ -1534,8 +1536,17 @@ async function onClick(event) {
     case 'generator': return renderGenerator(data.type);
     case 'logout': return logout();
     case 'theme': return toggleTheme();
-    case 'toggle-menu': document.body.classList.toggle('menu-open'); return;
-    case 'close-menu': document.body.classList.remove('menu-open'); return;
+    case 'toggle-menu': 
+      if (document.body.classList.contains('menu-open')) {
+        history.back(); 
+      } else {
+        history.pushState({ menu: 'open' }, '');
+        document.body.classList.add('menu-open'); 
+      }
+      return;
+    case 'close-menu': 
+      if (document.body.classList.contains('menu-open')) history.back(); 
+      return;
     case 'open-document': return openDocument(data.id);
     case 'export': return exportDocument(data.format);
     case 'copy': return copyDocument();
@@ -1545,11 +1556,11 @@ async function onClick(event) {
     case 'page': state.filters.page = Number(data.page); renderDocumentResults(); return;
     case 'edit-user': return editUser(data.id);
     case 'new-user': return renderUsers();
-   case 'test-provider': return testProvider(data.id);
+    case 'test-provider': return testProvider(data.id);
     case 'use-as-reference': 
       state.tempReference = document.querySelector('#editor-text').value;
       showToast('Isi dokumen disimpan ke memori AI. Silakan pilih jenis dokumen selanjutnya (misal: Bank Soal).');
-      return navigate('dashboard'); // Kembali ke halaman utama untuk memilih generator baru
+      return navigate('dashboard');
     default: return;
   }
 }
@@ -1647,6 +1658,13 @@ function toggleTheme() {
  * ----------------------------------------------------------------- */
 async function init() {
   document.documentElement.dataset.theme = localStorage.getItem(CONFIG.THEME_KEY) || 'light';
+  
+  window.addEventListener('popstate', () => {
+    if (document.body.classList.contains('menu-open')) {
+      document.body.classList.remove('menu-open');
+    }
+  });
+
   document.addEventListener('click', onClick);
   document.addEventListener('submit', onSubmit);
   document.addEventListener('input', onInput);
